@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row g-3">
+    {% for post in posts %}
+      <div class="col-md-3 col-6" id="post-{{ post.id }}">
+        <div class="card border-0">
+          <img 
+            src="{{ post.image.url }}" 
+            class="card-img-top rounded post-thumbnail"
+            alt="Post image"
+            role="button"
+            onclick="openPostDetail({{ post.id }})"
+          >
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="postDetailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" id="postDetailContent">
+      <!-- Nội dung bài post sẽ load vào đây -->
+    </div>
+  </div>
+</div>
+
+<script>
+  function openPostDetail(postId) {
+    fetch(`/posts/${postId}/`)
+      .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.text(); // server trả về HTML partial
+      })
+      .then(html => {
+        document.getElementById("postDetailContent").innerHTML = html;
+        const modal = new bootstrap.Modal(document.getElementById("postDetailModal"));
+        modal.show();
+        // Xử lý nút xóa bài post
+        attachDeleteHandler(postId);
+      })
+      .catch(error => {
+        console.error("Fetch error:", error);
+      });
+  }
+
+  function attachDeleteHandler(postId) {
+    const deleteBtn = document.getElementById('deleteBtn');
+    deleteBtn.addEventListener('click', () => {
+      if (!confirm('Are you sure you want to delete this post?')) return;
+      fetch(`/posts/${postId}/delete/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          // Đóng modal
+          const modal = bootstrap.Modal.getInstance(document.getElementById('postDetailModal'));
+          modal.hide();
+
+          // Xoá thẻ bài post khỏi danh sách
+          const postCard = document.getElementById(`post-${postId}`)
+          if (postCard) {
+            postCard.remove();
+          }
+        }
+        else {
+          alert('Error deleting post');
+        }
+      })
+      .catch(err => console.error(err));
+    });
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  window.getCookie = getCookie; // Make it globally accessible
+</script>
+{% endblock %}
