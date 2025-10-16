@@ -26,7 +26,11 @@ def post_list(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'posts/post_detail.html', {'post': post})
+    comments = post.comments.all().order_by('-created_at')
+    return render(request, 'posts/post_detail.html', {
+        'post': post,
+        'comments': comments
+    })
 
 
 @csrf_exempt

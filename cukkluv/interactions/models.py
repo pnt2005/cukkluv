@@ -10,7 +10,7 @@ class Comment(models.Model):
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     post =models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
 
     def __str__(self):
         return f'Comment by {self.user.username}'
