@@ -1,0 +1,32 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ post.author.username }}</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  <div id="viewMode">
+    <div class="text-center">
+      <img src="{{ post.image.url }}" class="img-fluid rounded mb-3" alt="">
+    </div>
+    <p id="postContent">{{ post.content }}</p>
+    <small class="text-muted">{{ post.created_at|date:"d/m/Y H:i" }}</small>
+  </div>
+
+  <form id="editForm" style="display:none;" enctype="multipart/form-data">
+    {% csrf_token %}
+    <textarea name="content" id="editContent" class="form-control mb-2" rows="5">{{ post.content }}</textarea>
+    <input type="file" name="image" id="editImage" class="form-control mb-2">
+    <div class="text-end">
+      <button type="submit" class="btn btn-success">💾</button>
+      <button type="button" id="cancelEdit" class="btn btn-secondary">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-outline-primary">❤️</button>
+  {% if user == post.author %}
+  <button id="editBtn" class="btn btn-warning">✏️</button>
+    <button id="deleteBtn" class="btn btn-danger">🗑️</button>
+  {% endif %}
+</div>
