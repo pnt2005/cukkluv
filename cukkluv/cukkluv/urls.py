@@ -9,7 +9,6 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('accounts/', include('accounts.urls')),
     path('posts/', include('posts.urls')),
-    path('interactions/', include('interactions.urls')),
 ]
 
 if settings.DEBUG:
