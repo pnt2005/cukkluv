@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row g-3">
+    {% for post in posts %}
+      <div class="col-md-3 col-6" id="post-{{ post.id }}">
+        <div class="card border-0">
+          <img 
+            src="{{ post.image.url }}" 
+            class="card-img-top rounded post-thumbnail"
+            alt="Post image"
+            role="button"
+            onclick="openPostDetail({{ post.id }})"
+          >
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="postDetailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" id="postDetailContent">
+      <!-- Nội dung bài post sẽ load vào đây -->
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'posts/post.js' %}"></script>
+{% endblock %}

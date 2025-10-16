@@ -21,6 +21,19 @@
       <button type="button" id="cancelEdit" class="btn btn-secondary">Cancel</button>
     </div>
   </form>
+
+  <div id="commentsContainer"></div>
+  {% if user.is_authenticated %}
+  <form id="commentForm" class="mt-3">
+    {% csrf_token %}
+    <div class="input-group">
+      <input type="text" id="commentInput" class="form-control" placeholder="Write comment...">
+      <button class="btn btn-primary" type="submit">Comment</button>
+    </div>
+  </form>
+  {% else %}
+  <p class="text-muted mt-3">Need to login</p>
+  {% endif %}
 </div>
 
 <div class="modal-footer">
