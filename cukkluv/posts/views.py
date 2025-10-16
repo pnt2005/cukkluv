@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from posts.models import Post
 from posts.forms import PostForm
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required
 def create_post(request):
@@ -25,13 +26,28 @@ def post_list(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'posts/partials/post_detail.html', {'post': post})
+    return render(request, 'posts/post_detail.html', {'post': post})
 
 
-@login_required
+@csrf_exempt
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == 'POST':
         post.delete()
         return JsonResponse({'success': True}, content_type='application/json')
+    return JsonResponse({'success': False}, content_type='application/json', status=400)
+
+
+@csrf_exempt
+def update_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                'success': True,
+                'content': post.content,
+                'image_url': post.image.url if post.image else ''
+            }, content_type='application/json')
     return JsonResponse({'success': False}, content_type='application/json', status=400)
