@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('{% static "app/homepage.png" %}');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: blur(0.5px) brightness(1);
+    z-index: -1;
+  }
+
+  .hero-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .hero-section h1 {
+    font-family: "Alex Brush", cursive;
+    font-size: 8rem;
+    font-weight: bold;
+    color: #fff; /* màu trắng */
+    text-shadow:
+      2px 2px 8px rgba(0,0,0,0.5), /* bóng đen */
+      0 0 20px rgba(111,207,151,0.2); /* bóng xanh nhẹ */
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .hero-section h1 {
+      font-size: 2.5rem;
+    }
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="hero-section">
+        <section>
+            <h1>Cukkluv</h1>
+        </section>
+    </div>
+{% endblock %}
