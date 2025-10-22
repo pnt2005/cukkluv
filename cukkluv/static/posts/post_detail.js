@@ -1,5 +1,7 @@
 import attachEditHandler from './edit_post.js';
 import attachDeleteHandler from './delete_post.js';
+import loadComments from '../comments/comment_list.js';
+import setupCommentForm from '../comments/create_comment.js';
 
 export default function openPostDetail(postId) {
     fetch(`/posts/${postId}/`)
@@ -11,7 +13,8 @@ export default function openPostDetail(postId) {
         document.getElementById("postDetailContent").innerHTML = html;
         const modal = new bootstrap.Modal(document.getElementById("postDetailModal"));
         modal.show();
-        // Xử lý nút xóa bài post
+        loadComments(postId);
+        setupCommentForm(postId);
         attachDeleteHandler(postId);
         attachEditHandler(postId);
     })
