@@ -5,13 +5,16 @@ from .serializers import CommentSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from rest_framework.pagination import PageNumberPagination
 
 class CommentListCreateView(APIView):
     def get(self, request, post_id):
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
         comments = Comment.objects.filter(post__id=post_id).order_by('-created_at')
-        serializer = CommentSerializer(comments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        result_page = paginator.paginate_queryset(comments, request)
+        serializer = CommentSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)

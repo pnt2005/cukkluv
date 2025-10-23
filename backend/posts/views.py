@@ -3,12 +3,16 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from posts.serializers import PostSerializer
 from posts.models import Post
+from rest_framework.pagination import PageNumberPagination
 
 class PostListCreateView(APIView):
     def get(self, request):
+        paginator = PageNumberPagination()
+        paginator.page_size = 5
         posts = Post.objects.all().order_by('-created_at')
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
+        result_page = paginator.paginate_queryset(posts, request)
+        serializer = PostSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
     
     def post(self, request):
         serializer = PostSerializer(data = request.data)
