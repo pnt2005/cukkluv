@@ -9,7 +9,8 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('accounts/', include('accounts.urls')),
     path('posts/', include('posts.urls')),
-    path('comments/', include('comments.urls'))
+    path('comments/', include('comments.urls')),
+    path('likes/', include('likes.urls')),
 ]
 
 if settings.DEBUG:
