@@ -1,6 +1,6 @@
 .env
 venv/
 __pycache__/
-cukkluv/cukkluv/settings.py
-cukkluv/media
+settings.py
+media
 migrations/
