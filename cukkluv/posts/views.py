@@ -1,57 +1,38 @@
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from posts.serializers import PostSerializer
 from posts.models import Post
-from posts.forms import PostForm
-from django.views.decorators.csrf import csrf_exempt
 
-@login_required
-def create_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.save()
-            return redirect('post_list')
-    else:
-        form = PostForm()
-        return render(request, 'posts/create_post.html', {'form': form})
+class PostListCreateView(APIView):
+    def get(self, request):
+        posts = Post.objects.all().order_by('-created_at')
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
     
-
-def post_list(request):
-    posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'posts/post_list.html', {'posts': posts})
-
-
-def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    comments = post.comments.all().order_by('-created_at')
-    return render(request, 'posts/post_detail.html', {
-        'post': post,
-        'comments': comments
-    })
+    def post(self, request):
+        serializer = PostSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
 
-@csrf_exempt
-def post_delete(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == 'POST':
+class PostDetailView(APIView):
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+    
+    def put(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+    
+    def delete(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
         post.delete()
-        return JsonResponse({'success': True}, content_type='application/json')
-    return JsonResponse({'success': False}, content_type='application/json', status=400)
-
-
-@csrf_exempt
-def update_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES, instance=post)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({
-                'success': True,
-                'content': post.content,
-                'image_url': post.image.url if post.image else ''
-            }, content_type='application/json')
-    return JsonResponse({'success': False}, content_type='application/json', status=400)
+        return Response(status=204)
