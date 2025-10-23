@@ -9,6 +9,7 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('accounts/', include('accounts.urls')),
     path('posts/', include('posts.urls')),
+    path('recipes/', include('recipes.urls')),
     path('interactions/', include('interactions.urls')),
 ]
 
