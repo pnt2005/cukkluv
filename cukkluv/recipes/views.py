@@ -1,36 +1,219 @@
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
-from .models import Recipe
-from .forms import RecipeForm
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 
-# Create your views here.
-@login_required
-def create_recipe(request):
-    if request.method == 'POST': # check có phải submit form hay ko
-        form = RecipeForm(request.POST, request.FILES) # khởi tạo form từ dữ liệu người dùng gửi lên request.post là text, request.file là file đính kèm, trong trường hợp này là image
-        if form.is_valid(): # kiểm tra form có hợp lệ từng với các ràng buộc trong forms.py ko
-            Recipe = form.save(commit=False) # Recipe ở đây là class Recipe thuộc models.py thuộc database; khởi tạo Recipe từ form nhưng commit = false để ch lưu vội vào database, chờ thêm tác giả
-            Recipe.author = request.user # gán tác giả là user hiện tại
-            Recipe.save() # lưu vào database
-            form.save_m2m()  # Save tags ---??--
-            return redirect('recipe_list') # chuyển hướng về trang danh sách bài viết
-    else:
-        form = RecipeForm() # khởi tạo form rỗng
-        return render(request, 'recipes/create_recipe.html', {'form': form}) # render trang tạo bài viết, truyền form rỗng vào context để hiển thị
+from recipes.models import Recipe, Tag, RecipeTag
+from recipes.serializer import (
+    RecipeSerializer,
+    RecipeListSerializer,
+    RecipeCreateSerializer,
+    TagSerializer
+)
+
+# RECIPE VIEW
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def recipe_list_create(request):
+    """
+    GET /api/recipes/ - Lấy danh sách recipes
+    POST /api/recipes/ - Tạo recipe mới
+    """
+
+    if request.method == 'GET':
+        # Lấy danh sách recipes theo thời gian tạo
+        recipes = Recipe.objects.all().order_by('-created_at')
+        serializer = RecipeListSerializer(recipes, many=True)
+        return Response(serializer.data)
     
-def recipe_list(request): #khởi tạo trang hiển thị danh sách recipe
-    recipes = Recipe.objects.all().order_by('-created_at') # lấy tất cả recipe trong database, sắp xếp theo thời gian tạo mới nhất
-    return render(request, 'recipes/recipe_list.html', {'recipes': recipes})
+    elif request.method == 'POST':
+        # Tạo recipe mới
+        serializer = RecipeCreateSerializer(data=request.data, context={'request': request})
 
+        if serializer.is_valid():
+            # Tự động gán author = user hiện tại
+            serializer.save(author=request.user)
+
+            # Trả về response với serializer đầy đủ
+            recipe = serializer.instance
+            output_serializer = RecipeSerializer(recipe)
+
+            return Response(
+                output_serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+        
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def recipe_detail(request, pk):
-    recipe = get_object_or_404(Recipe, pk=pk)
-    return render(request, 'recipes/partials/recipe_detail.html', {'recipe': recipe})
+    """
+    GET /api/recipes{id}/ - Lấy chi tiết recipe
+    PUT /api/recipes{id}/ - Cập nhật toàn bộ recipe
+    PATCH /api/recipes{id}/ - Cập nhật 1 phần recipe
+    DELETE /api/recipes{id}/ - Xóa recipe
+    """
 
-@login_required
-def recipe_delete(request, pk):
     recipe = get_object_or_404(Recipe, pk=pk)
-    if request.method == 'POST':
+
+    if request.method == 'GET':
+        # Lấy chi tiết recipe
+        serializer = RecipeSerializer(recipe)
+        return Response(serializer.data)
+    
+    elif request.method == 'PUT':
+        # Cập nhật toàn bộ recipe
+        serializer = RecipeSerializer(recipe, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    elif request.method == 'PATCH':
+        # Cập nhật 1 phần recipe
+        serializer = RecipeSerializer(
+            recipe,
+            data=request.data,
+            partial=True # Cho phép update 1 phần
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    elif request.method == 'DELETE':
+        # Xóa recipe
         recipe.delete()
-        return JsonResponse({'success': True}, content_type='application/json')
-    return JsonResponse({'success': False}, content_type='application/json', status=400)
+        return Response(
+            {'success': True, 'message ': 'Recipe deleted successfully'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_recipes(request):
+    """
+    GET recipes/my-recipes/ - Lấy danh sách recipes của user hiện tại
+    """
+
+    recipes = Recipe.objects.filter(author=request.user).order_by('-created-at')
+    serializer = RecipeListSerializer(recipes, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def duplicate_recipe(request, pk):
+    """
+    POST recipes/{id}/duplicate/ - Nhân bản recipe
+    """
+    original_recipe = get_object_or_404(Recipe, pk=pk)
+
+    # Tạo recipe mới
+    new_recipe = Recipe.objects.create(
+        author=request.user,
+        title=f"{original_recipe.title} (Copy)",
+        description=original_recipe.description,
+        ingredients=original_recipe.ingredients,
+        steps=original_recipe.steps,
+        image=original_recipe.image
+    )
+
+    # Copy tags
+    for recipe_tag in original_recipe.recipetag_set.all():
+        RecipeTag.objects.create(recipe=new_recipe, tag=recipe_tag.tag)
+    
+    serializer = RecipeSerializer(new_recipe)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+# TAG VIEWS
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def tag_list_create(request):
+    """
+    GET tags/ - Lấy danh sách tags
+    POST tags/ - Tạo tag mới
+    """
+    if request.method == 'GET':
+        # Lấy danh sách tag
+        tags = Tag.objects.all().order_by('name')
+        serializer = TagSerializer(tags, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        # Tạo tag mới
+        serializer = TagSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def tag_detail(request, pk):
+    """
+    GET tags/{id}/ - Lấy chi tiết tag
+    PUT tags/{id}/ - Cập nhật tag
+    DELETE tags/{id}/ - Xóa tag
+    """
+    tag = get_object_or_404(Tag, pk=pk)
+
+    if request.method == 'GET':
+        # Lấy chi tiết tag
+        serializer = TagSerializer(tag)
+        return Response(serializer.data)
+    
+    elif request.method == 'PUT':
+        # Cập nhật tag
+        serializer = TagSerializer(tag, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    elif request.method == 'DELETE':
+        # Xóa tag
+        tag.delete()
+        return Response(
+            {'success': True, 'message': 'Tag deleted sucessfully'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+@api_view(['GET'])
+def tag_recipes(request, pk):
+    """
+    GET tags/{id}/recipes/ - Lấy tất cả recipes có tag này
+    """
+    tag = get_object_or_404(Tag, pk=pk)
+    recipes = Recipe.objects.filter(tags=tag).order_by('-created_at')
+    serializer = RecipeListSerializer(recipes, many=True)
+    return Response(serializer.data)
