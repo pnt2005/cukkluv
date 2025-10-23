@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { showSuccess, showError, showWarning } from '../../utils/toast';
 import { Link } from 'react-router-dom';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -14,7 +16,7 @@ export default function LoginPage() {
       return;
     }
 
-    fetch('http://127.0.0.1:8000/accounts/login/', {
+    fetch(`${API_BASE_URL}/accounts/login/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -22,6 +24,7 @@ export default function LoginPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.token) {
+          localStorage.setItem('token', data.token);
           showSuccess('Login successful! Redirecting...');
           setTimeout(() => {
             window.location.href = '/';

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess } from '../../utils/toast';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ function RegisterPage() {
     e.preventDefault();
 
     try {
-      const res = await fetch('http://localhost:8000/accounts/register/', {
+      const res = await fetch(`${API_BASE_URL}/accounts/register/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
