@@ -10,15 +10,18 @@ from .serializers import LikeSerializer
 
 
 class LikePostView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
         likes = Like.objects.filter(post=post)
         serializer = LikeSerializer(likes, many=True)
+        user_liked = False
+        if request.user.is_authenticated:
+            user_liked = likes.filter(user=request.user).exists()
+
         return Response({
             'total_likes': likes.count(),
-            'likes': serializer.data
+            'likes': serializer.data,
+            'user_liked': user_liked
         }, status=status.HTTP_200_OK)
 
     def post(self, request, post_id):

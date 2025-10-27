@@ -17,7 +17,7 @@ class PostListCreateView(APIView):
     def post(self, request):
         serializer = PostSerializer(data = request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(author=request.user)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -25,7 +25,7 @@ class PostListCreateView(APIView):
 class PostDetailView(APIView):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        serializer = PostSerializer(post)
+        serializer = PostSerializer(post, context={'request': request})
         return Response(serializer.data)
     
     def put(self, request, pk):
