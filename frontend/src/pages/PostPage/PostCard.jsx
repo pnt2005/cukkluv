@@ -4,14 +4,12 @@ import LikeButton from "../../components/LikeButton.jsx";
 import { MessageCircle } from "lucide-react";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const PostCard = forwardRef(({ post, onClick }, ref) => {
+const PostCard = (({ post, onClick }) => {
   const [totalLikes, setTotalLikes] = useState();
   const [userLiked, setUserLiked] = useState();
-  const [loadingLikes, setLoadingLikes] = useState(true);
 
-  const fetchPostLike = async (signal) => {
+  const fetchPostLike = async () => {
     const res = await fetch(`${API_BASE_URL}/likes/posts/${post.id}/`, { 
-      signal,
       headers: {
         "Authorization": `Token ${localStorage.getItem("token")}`
       }
@@ -21,9 +19,7 @@ const PostCard = forwardRef(({ post, onClick }, ref) => {
   };
 
   useEffect(() => {
-    const ac = new AbortController();
-    setLoadingLikes(true);
-    fetchPostLike(ac.signal)
+    fetchPostLike()
       .then((data) => {
         // adjust fields names if your API uses different keys
         setTotalLikes(data.total_likes);
@@ -33,12 +29,10 @@ const PostCard = forwardRef(({ post, onClick }, ref) => {
         // keep fallback values from post prop on error
       })
       .finally(() => setLoadingLikes(false));
-    return () => ac.abort();
   }, [post.id]);
 
   return (
     <div
-      ref={ref}
       className="card mb-4 shadow-sm mx-auto"
       style={{ maxWidth: "500px", maxWidth: "100%", cursor: "pointer" }}
       onClick={onClick}
