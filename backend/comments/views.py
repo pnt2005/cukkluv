@@ -18,10 +18,14 @@ class CommentListCreateView(APIView):
 
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
+        parent_id = request.data.get("parent_id")
+        parent = None
+        if parent_id:
+            parent = Comment.objects.filter(id=parent_id, post=post).first()
         serializer = CommentSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save(user=request.user, post=post)
+            serializer.save(user=request.user, post=post, parent=parent)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
