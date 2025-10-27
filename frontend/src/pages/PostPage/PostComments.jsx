@@ -38,7 +38,7 @@ export default function PostComments({ postId }) {
 
   return (
     <div className="d-flex flex-column h-100">
-      <div className="flex-grow-1 mb-3" style={{ height: "400px" }}>
+      <div className="flex-grow-1 mb-3" style={{ height: "300px" }}>
         <InfiniteScroll
           key={commentListKey}
           fetchPage={fetchCommentsPage}

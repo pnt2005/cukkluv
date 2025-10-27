@@ -16,7 +16,8 @@ export default function PostPage() {
 
   return (
     <div className="container mt-4">
-      <div className="d-flex flex-column align-items-center">
+      <div className="row justify-content-center">
+        <div className="col-md-8">
         <InfiniteScroll
           fetchPage={fetchPostsPage}
           renderItem={(post) => (
@@ -28,6 +29,7 @@ export default function PostPage() {
           )}
           containerStyle={{ width: "100%" }}
         />
+        </div>
       </div>
 
       {selectedPostId && (

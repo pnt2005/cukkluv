@@ -52,7 +52,6 @@ export default function InfiniteScrollList({
     <div ref={containerRef} style={containerStyle}>
       {items.map(renderItem)}
       {loading && <div className="text-center my-2">Loading...</div>}
-      {!hasNext && !loading && <div className="text-center my-2">No more items</div>}
     </div>
   );
 }
