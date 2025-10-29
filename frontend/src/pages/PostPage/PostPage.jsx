@@ -1,41 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePostStore } from "../../store/usePostStore.js";
 import PostCard from "./PostCard";
 import PostModal from "./PostModal";
 import InfiniteScroll from "../../components/InfiniteScroll.jsx";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export default function PostPage() {
   const [selectedPostId, setSelectedPostId] = useState(null);
+  const { posts, fetchPosts, hasNext, page } = usePostStore();
 
-  // Hàm fetch page cho InfiniteScrollList
-  const fetchPostsPage = async (page) => {
-    const res = await fetch(`${API_BASE_URL}/posts/?page=${page}`);
-    return res.json(); // DRF trả { results, next, previous, count }
+  useEffect(() => {
+    fetchPosts(1);
+  }, []);
+
+  const handleLoadMore = () => {
+    if (hasNext) fetchPosts(page + 1);
   };
 
   return (
     <div className="container mt-4">
       <div className="row justify-content-center">
         <div className="col-md-8">
-        <InfiniteScroll
-          fetchPage={fetchPostsPage}
-          renderItem={(post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              onClick={() => setSelectedPostId(post.id)}
-            />
-          )}
-          containerStyle={{ width: "100%" }}
-        />
+          <InfiniteScroll
+            items={posts}
+            renderItem={(post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                onClick={() => setSelectedPostId(post.id)}
+              />
+            )}
+            onLoadMore={handleLoadMore}
+            containerStyle={{ width: "100%" }}
+          />
         </div>
       </div>
 
       {selectedPostId && (
         <PostModal
           postId={selectedPostId}
-          onClose={() => setSelectedPostId(null)}
+          onClose={() => {
+            setSelectedPostId(null);
+          }}
         />
       )}
     </div>

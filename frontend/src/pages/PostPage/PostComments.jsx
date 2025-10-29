@@ -1,52 +1,44 @@
-import { useRef, useState } from "react";
-import InfiniteScroll from "../../components/InfiniteScroll.jsx";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { useEffect, useRef } from "react";
+import { useCommentStore } from "../../store/useCommentStore.js";
+import InfiniteScrollList from "../../components/InfiniteScroll.jsx";
 
 export default function PostComments({ postId }) {
   const commentInputRef = useRef();
-  const [commentListKey, setCommentListKey] = useState(0);
+  const { commentsByPost, fetchComments, addComment } = useCommentStore();
+  const commentsData = commentsByPost[postId] || { results: [], next: null, page: 0 };
 
-  // fetch comments phân trang
-  const fetchCommentsPage = async (page) => {
-    const res = await fetch(`${API_BASE_URL}/comments/posts/${postId}/?page=${page}`);
-    return res.json(); // {results, next, previous, count}
-  };
+  useEffect(() => {
+    fetchComments(postId, 1);
+  }, [postId, fetchComments]);
 
-  // gửi comment
   const handleSendComment = async () => {
     const content = commentInputRef.current.value.trim();
     if (!content) return;
-
     try {
-      const res = await fetch(`${API_BASE_URL}/comments/posts/${postId}/`, {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Token ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({ content }),
-      });
-      if (!res.ok) throw new Error("Failed to send comment");
-
+      await addComment(postId, content);
       commentInputRef.current.value = "";
-      setCommentListKey((prev) => prev + 1); // reload comment list
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (commentsData.next) {
+      fetchComments(postId, commentsData.page + 1);
     }
   };
 
   return (
     <div className="d-flex flex-column h-100">
       <div className="flex-grow-1 mb-3" style={{ height: "300px" }}>
-        <InfiniteScroll
-          key={commentListKey}
-          fetchPage={fetchCommentsPage}
+        <InfiniteScrollList
+          items={commentsData.results}
           renderItem={(c) => (
             <div key={c.id} className="mb-2">
               <b>{c.user.username}</b>: {c.content}
             </div>
           )}
+          onLoadMore={handleLoadMore}
           containerStyle={{
             height: "100%",
             overflowY: "auto",
