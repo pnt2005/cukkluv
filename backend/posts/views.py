@@ -11,7 +11,7 @@ class PostListCreateView(APIView):
         paginator.page_size = 5
         posts = Post.objects.all().order_by('-created_at')
         result_page = paginator.paginate_queryset(posts, request)
-        serializer = PostSerializer(result_page, many=True)
+        serializer = PostSerializer(result_page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
     
     def post(self, request):
