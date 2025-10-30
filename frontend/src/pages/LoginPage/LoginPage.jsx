@@ -1,41 +1,31 @@
 import { useState } from 'react';
 import { showSuccess, showError, showWarning } from '../../utils/toast';
 import { Link } from 'react-router-dom';
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
+import { authAPI } from '../../utils/api';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!username || !password) {
       showWarning('Please fill in all fields!');
       return;
     }
-
-    fetch(`${API_BASE_URL}/accounts/login/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          showSuccess('Login successful! Redirecting...');
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1500);
-        } else {
-          showError('Username or password is incorrect!');
-        }
-      })
-      .catch(() => {
-        showError('An error occurred. Please try again later.');
-      });
+     try {
+      const data = await authAPI.login(username, password);
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        showSuccess("Login successful! Redirecting...");
+        setTimeout(() => (window.location.href = "/"), 1500);
+      } else {
+        showError("Username or password is incorrect!");
+      }
+    } catch (err) {
+      console.error(err);
+      showError("An error occurred. Please try again later.");
+    }
   };
 
   return (
@@ -62,7 +52,6 @@ export default function LoginPage() {
           <button type="submit" className="btn btn-warning w-100">
             Login
           </button>
-
           <p className="text-center">
             Don't have an account?{' '}
             <Link to="/register" className="text-warning fw-bold text-decoration-none">

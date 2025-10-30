@@ -1,6 +1,5 @@
 import { useState } from "react";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { postsAPI } from "../../utils/api";
 
 export default function CreatePostModal() {
   const [content, setContent] = useState("");
@@ -15,29 +14,23 @@ export default function CreatePostModal() {
       setError("Please select an image");
       return;
     }
+
     setLoading(true);
     setError("");
+
     const formData = new FormData();
     formData.append("content", content);
     formData.append("image", image);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/posts/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${localStorage.getItem("token")}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Failed to create post");
+      await postsAPI.createPost(formData);
       setContent("");
       setImage(null);
       setPreview(null);
       window.location.reload();
     } catch (err) {
       console.error(err);
-      setError("Error: " + err.message);
+      setError("Error: " + (err.data?.detail || err.message));
     } finally {
       setLoading(false);
     }
@@ -47,7 +40,7 @@ export default function CreatePostModal() {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setPreview(URL.createObjectURL(file)); // tạo URL preview
+      setPreview(URL.createObjectURL(file));
     }
   };
 
@@ -62,10 +55,7 @@ export default function CreatePostModal() {
       <div className="modal-dialog modal-lg">
         <div className="modal-content p-2">
           <div className="modal-header">
-            <h5
-              className="modal-title text-warning fw-bold"
-              id="createPostModalLabel"
-            >
+            <h5 className="modal-title text-warning fw-bold" id="createPostModalLabel">
               Create New Post
             </h5>
             <button
@@ -78,7 +68,6 @@ export default function CreatePostModal() {
 
           <form onSubmit={handleSubmit}>
             <div className="modal-body d-flex gap-3">
-              {/* Cột trái: ảnh preview */}
               <div
                 className="flex-shrink-0 d-flex align-items-center justify-content-center bg-light rounded"
                 style={{ width: "50%", minHeight: "250px" }}
@@ -99,7 +88,6 @@ export default function CreatePostModal() {
                 )}
               </div>
 
-              {/* Cột phải: chọn ảnh + content */}
               <div className="flex-grow-1">
                 <div className="mb-2">
                   <label className="form-label fw-semibold">Image</label>
@@ -126,11 +114,7 @@ export default function CreatePostModal() {
             </div>
 
             <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
                 Cancel
               </button>
               <button

@@ -3,7 +3,6 @@ import PostComments from "./PostComments";
 import LikeButton from "../../components/LikeButton.jsx";
 import { MessageCircle } from "lucide-react";
 import { usePostStore } from "../../store/usePostStore.js";
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function PostModal({ postId, onClose }) {
@@ -50,29 +49,24 @@ export default function PostModal({ postId, onClose }) {
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </div>
-
               {/* Bên phải */}
               <div className="col-5 d-flex flex-column p-3">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <strong>{post.author.username}</strong>
                   <button type="button" className="btn-close" onClick={onClose}></button>
                 </div>
-
                 <div className="mb-3">
                   <p className="mb-0">{post.content}</p>
                 </div>
-
                 <div className="d-flex align-items-center gap-3 mb-2">
                   <LikeButton
                     postId={post.id}
                   />
                   <span>
-                    {post.comment_count} <MessageCircle />
+                    <MessageCircle /> {post.comment_count}
                   </span>
                 </div>
-
                 <hr />
-
                 <div className="flex-grow-1 overflow-auto">
                   <PostComments postId={postId} />
                 </div>

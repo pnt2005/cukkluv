@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useCommentStore } from "../../store/useCommentStore.js";
-import InfiniteScrollList from "../../components/InfiniteScroll.jsx";
+import CommentList from "./components/CommentList.jsx";
 
 export default function PostComments({ postId }) {
   const commentInputRef = useRef();
@@ -31,25 +31,8 @@ export default function PostComments({ postId }) {
   return (
     <div className="d-flex flex-column h-100">
       <div className="flex-grow-1 mb-3" style={{ height: "300px" }}>
-        <InfiniteScrollList
-          items={commentsData.results}
-          renderItem={(c) => (
-            <div key={c.id} className="mb-2">
-              <b>{c.user.username}</b>: {c.content}
-            </div>
-          )}
-          onLoadMore={handleLoadMore}
-          containerStyle={{
-            height: "100%",
-            overflowY: "auto",
-            border: "1px solid #ddd",
-            borderRadius: "5px",
-            padding: "5px",
-            backgroundColor: "#f8f9fa",
-          }}
-        />
+        <CommentList postId={postId} items={commentsData.results} onLoadMore={handleLoadMore} />
       </div>
-
       <div className="d-flex gap-2">
         <input
           ref={commentInputRef}

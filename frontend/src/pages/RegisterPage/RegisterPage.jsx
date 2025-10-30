@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess } from '../../utils/toast';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
+import { authAPI } from '../../utils/api';
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -11,26 +11,17 @@ function RegisterPage() {
     email: '',
     password: '',
   });
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await fetch(`${API_BASE_URL}/accounts/register/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-
-      if (res.ok) {
+      const data = await authAPI.register(JSON.stringify(form));
+      if (data.ok) {
         showSuccess('Registration successful! Redirecting to login...');
         navigate('/login');
       } else {
-        const data = await res.json();
         showError('Registration failed');
       }
     } catch (err) {
@@ -53,7 +44,6 @@ function RegisterPage() {
               required
             />
           </div>
-
           <div className="mb-3">
             <input
               type="email"
@@ -65,7 +55,6 @@ function RegisterPage() {
               required
             />
           </div>
-
           <div className="mb-3">
             <input
               type="password"
@@ -77,7 +66,6 @@ function RegisterPage() {
               required
             />
           </div>
-
           <button type="submit" className="btn btn-warning w-100 fw-bold">
             Register
           </button>
