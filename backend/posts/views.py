@@ -4,8 +4,14 @@ from django.shortcuts import get_object_or_404
 from posts.serializers import PostSerializer
 from posts.models import Post
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 
 class PostListCreateView(APIView):
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return []
+    
     def get(self, request):
         paginator = PageNumberPagination()
         paginator.page_size = 5
@@ -23,6 +29,11 @@ class PostListCreateView(APIView):
 
 
 class PostDetailView(APIView):
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return []
+    
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         serializer = PostSerializer(post, context={'request': request})

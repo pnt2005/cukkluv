@@ -6,8 +6,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 
 class CommentListCreateView(APIView):
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return []
+
     def get(self, request, post_id):
         paginator = PageNumberPagination()
         paginator.page_size = 10
@@ -28,9 +34,19 @@ class CommentListCreateView(APIView):
             serializer.save(user=request.user, post=post, parent=parent)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 class CommentDetailView(APIView):
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return []
+    
+    def get(self, request, comment_id):
+        comment = get_object_or_404(Comment, id=comment_id)
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data)
+
     def put(self, request, comment_id):
         comment = get_object_or_404(Comment, id=comment_id, user=request.user)
         serializer = CommentSerializer(comment, data=request.data)
