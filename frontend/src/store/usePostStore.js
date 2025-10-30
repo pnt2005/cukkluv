@@ -1,8 +1,5 @@
-// src/store/usePostStore.js
 import { create } from "zustand";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const token = localStorage.getItem("token");
+import { postsAPI } from "../utils/api.js";
 
 export const usePostStore = create((set, get) => ({
   posts: [],
@@ -11,14 +8,7 @@ export const usePostStore = create((set, get) => ({
 
   //Lấy danh sách post
   fetchPosts: async (page = 1) => {
-    const res = await fetch(`${API_BASE_URL}/posts/?page=${page}`,{
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${token}`,
-      },
-    });
-    const data = await res.json();
-
+    const data = await postsAPI.fetchPosts(page);
     set((state) => ({
       posts: page === 1 ? data.results : [...state.posts, ...data.results],
       hasNext: Boolean(data.next),
@@ -43,13 +33,7 @@ export const usePostStore = create((set, get) => ({
 
     //gọi API thật
     try {
-      const res = await fetch(`${API_BASE_URL}/likes/posts/${postId}/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      });
-      if (!res.ok) throw new Error("Failed to toggle like");
+      await postsAPI.toggleLike(postId);
     } catch (err) {
       // rollback nếu API lỗi
       set((state) => ({
