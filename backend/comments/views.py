@@ -11,7 +11,7 @@ class CommentListCreateView(APIView):
     def get(self, request, post_id):
         paginator = PageNumberPagination()
         paginator.page_size = 10
-        comments = Comment.objects.filter(post__id=post_id).order_by('-created_at')
+        comments = Comment.objects.filter(post__id=post_id, parent=None).order_by('-created_at')
         result_page = paginator.paginate_queryset(comments, request)
         serializer = CommentSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
