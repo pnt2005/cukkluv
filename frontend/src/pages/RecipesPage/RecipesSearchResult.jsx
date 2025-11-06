@@ -3,7 +3,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScrollList from '../../components/InfiniteScroll';
-import RecipeCard from './RecipeCard';
+import RecipeCard from './RecipesCard';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

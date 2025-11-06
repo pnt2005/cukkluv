@@ -1,14 +1,17 @@
-import { useState, useEffect } from "react";
+// RecipePage.jsx (Updated với Search)
+// Đường dẫn: cukkluv/frontend/src/pages/RecipePage/RecipePage.jsx
+import { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import RecipeCard from "./RecipeCard";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import SearchBar from "../../components/SearchBar";
+import RecipeCard from "./RecipesCard";
+import RecipeSearchResults from "./RecipesSearchResult";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Component cho từng section recipes
+// Component cho từng section recipes (scroll ngang)
 const RecipeSection = ({ title, recipes, onRecipeClick }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
-  const containerRef = useState(null)[1];
 
   const scroll = (direction) => {
     const container = document.getElementById(`scroll-${title}`);
@@ -32,7 +35,7 @@ const RecipeSection = ({ title, recipes, onRecipeClick }) => {
         {/* Nút scroll trái */}
         <button
           onClick={() => scroll('left')}
-          className="position-absolute top-50 start-0 translate-middle-y btn btn-light rounded-circle shadow opacity-75 hover-opacity-100"
+          className="position-absolute top-50 start-0 translate-middle-y btn btn-light rounded-circle shadow opacity-75"
           style={{ zIndex: 10, width: "40px", height: "40px" }}
         >
           <ChevronLeft size={20} />
@@ -48,11 +51,13 @@ const RecipeSection = ({ title, recipes, onRecipeClick }) => {
             WebkitOverflowScrolling: 'touch'
           }}
         >
+
           {recipes.map((recipe) => (
             <div key={recipe.id} onClick={() => onRecipeClick(recipe.id)}>
               <RecipeCard 
                 recipe={recipe} 
                 showAuthor={title === "Công thức từ cộng đồng"}
+                layout="vertical"
               />
             </div>
           ))}
@@ -61,19 +66,16 @@ const RecipeSection = ({ title, recipes, onRecipeClick }) => {
         {/* Nút scroll phải */}
         <button
           onClick={() => scroll('right')}
-          className="position-absolute top-50 end-0 translate-middle-y btn btn-light rounded-circle shadow opacity-75 hover-opacity-100"
+          className="position-absolute top-50 end-0 translate-middle-y btn btn-light rounded-circle shadow opacity-75"
           style={{ zIndex: 10, width: "40px", height: "40px" }}
         >
           <ChevronRight size={20} />
         </button>
       </div>
 
-      <style jsx>{`
+      <style>{`
         #scroll-${title}::-webkit-scrollbar {
           display: none;
-        }
-        .hover-opacity-100:hover {
-          opacity: 1 !important;
         }
       `}</style>
     </div>
@@ -83,6 +85,7 @@ const RecipeSection = ({ title, recipes, onRecipeClick }) => {
 export default function RecipePage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
   const [communityRecipes, setCommunityRecipes] = useState([]);
   const [cukkluvsRecipes, setCukkluvsRecipes] = useState([]);
@@ -94,12 +97,13 @@ export default function RecipePage() {
     fetchCurrentUser();
   }, []);
 
+// Lấy thông tin user hiện tại để hiển thị "Công thức của {username}"
   const fetchCurrentUser = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const res = await fetch(`${API_BASE_URL}/auth/user/`, {
+      const res = await fetch(`${API_BASE_URL}/accounts/me/`, {
         headers: {
           "Authorization": `Token ${token}`,
         },
@@ -122,15 +126,16 @@ export default function RecipePage() {
         ...(token && { "Authorization": `Token ${token}` })
       };
 
+      // 3 fetch calls song song
       // Fetch community recipes
-      const communityRes = await fetch(`${API_BASE_URL}/recipes/community/`, { headers });
+      const communityRes = await fetch(`${API_BASE_URL}/recipes`, { headers });
       if (communityRes.ok) {
         const data = await communityRes.json();
         setCommunityRecipes(data.results || data);
       }
 
       // Fetch cukkluv's recipes
-      const cukkluvRes = await fetch(`${API_BASE_URL}/recipes/cukkluv/`, { headers });
+      const cukkluvRes = await fetch(`${API_BASE_URL}/recipes?username=admin`, { headers });
       if (cukkluvRes.ok) {
         const data = await cukkluvRes.json();
         setCukkluvsRecipes(data.results || data);
@@ -138,7 +143,7 @@ export default function RecipePage() {
 
       // Fetch user's recipes
       if (token) {
-        const userRes = await fetch(`${API_BASE_URL}/recipes/my-recipes/`, { headers });
+        const userRes = await fetch(`${API_BASE_URL}/recipes?username=${currentUser}`, { headers });
         if (userRes.ok) {
           const data = await userRes.json();
           setUserRecipes(data.results || data);
@@ -147,101 +152,77 @@ export default function RecipePage() {
     } catch (error) {
       console.error("Error fetching recipes:", error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Tắt loading
     }
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/recipes/search/?q=${searchQuery}`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Token ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setCommunityRecipes(data.results || data);
-        // Reset other sections khi search
-        setCukkluvsRecipes([]);
-        setUserRecipes([]);
-      }
-    } catch (error) {
-      console.error("Error searching recipes:", error);
+  // Xử lý tìm kiếm
+  const handleSearch = (query) => {
+    if (query.trim()) {
+      setIsSearching(true);
     }
+  };
+
+ // Xóa tìm kiếm
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setIsSearching(false);
   };
 
   const handleRecipeClick = (recipeId) => {
     navigate(`/recipes/${recipeId}`);
   };
 
-  if (loading) {
-    return (
-      <div className="container mt-5">
-        <div className="row justify-content-center">
-          <div className="col-md-8 text-center">
-            <div className="spinner-border text-warning" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mt-4">
       <div className="row justify-content-center">
         <div className="col-md-10">
-          {/* Thanh tìm kiếm */}
+          {/* Thanh tìm kiếm - sticky */}
           <div className="bg-white p-3 rounded shadow-sm mb-4 sticky-top" style={{ top: "60px", zIndex: 100 }}>
-            <form onSubmit={handleSearch} className="d-flex gap-2">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Tìm kiếm công thức..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button type="submit" className="btn btn-warning text-white d-flex align-items-center gap-2">
-                <Search size={18} />
-                Tìm kiếm
-              </button>
-            </form>
+            <SearchBar
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onSearch={handleSearch}
+              onClear={handleClearSearch}
+              placeholder="Tìm kiếm công thức..."
+            />
           </div>
 
-          {/* Các sections recipes */}
-          <RecipeSection 
-            title="Công thức từ cộng đồng"
-            recipes={communityRecipes}
-            onRecipeClick={handleRecipeClick}
-          />
+          {/* Hiển thị search results hoặc sections mặc định */}
+          {isSearching ? (
+            <RecipeSearchResults searchQuery={searchQuery} />
+          ) : (
+            <>
+              {/* Các sections scroll ngang */}
+              <RecipeSection 
+                title="Công thức từ cộng đồng"
+                recipes={communityRecipes}
+                onRecipeClick={handleRecipeClick}
+              />
 
-          <RecipeSection 
-            title="Công thức bởi cukkluv"
-            recipes={cukkluvsRecipes}
-            onRecipeClick={handleRecipeClick}
-          />
+              <RecipeSection 
+                title="Công thức bởi cukkluv"
+                recipes={cukkluvsRecipes}
+                onRecipeClick={handleRecipeClick}
+              />
 
-          {currentUser && (
-            <RecipeSection 
-              title={`Công thức của ${currentUser}`}
-              recipes={userRecipes}
-              onRecipeClick={handleRecipeClick}
-            />
-          )}
+              {currentUser && (
+                <RecipeSection 
+                  title={`Công thức của ${currentUser}`}
+                  recipes={userRecipes}
+                  onRecipeClick={handleRecipeClick}
+                />
+              )}
 
-          {/* Empty state */}
-          {communityRecipes.length === 0 && 
-           cukkluvsRecipes.length === 0 && 
-           userRecipes.length === 0 && (
-            <div className="text-center py-5 text-muted">
-              <p>Chưa có công thức nào</p>
-            </div>
+              {/* Empty state */}
+              {communityRecipes.length === 0 && 
+               cukkluvsRecipes.length === 0 && 
+               userRecipes.length === 0 && (
+                <div className="text-center py-5 text-muted">
+                  <p>Chưa có công thức nào</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
