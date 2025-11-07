@@ -20,11 +20,7 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
-    
-    # Property để lấy tên tác giả
-    @property
-    def author_name(self):
-        return self.author.username
+
     
 
 # class Tag(models.Model):
