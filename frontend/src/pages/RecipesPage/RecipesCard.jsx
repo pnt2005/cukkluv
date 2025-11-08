@@ -10,9 +10,9 @@ const RecipeCard = ({ recipe, showAuthor, layout = "vertical" }) => {
       <div 
         className="flex-shrink-0 bg-white rounded-3 overflow-hidden shadow-sm hover:shadow-md transition-all" 
         style={{ 
-          width: "230px", 
+          width: "250px", 
           height: "250px",
-          cursor: "pointer" 
+          cursor: "pointer",
         }}
       >
         {/* Phần ảnh */}
