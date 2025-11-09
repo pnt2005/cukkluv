@@ -1,5 +1,3 @@
-// RecipeSearchResults.jsx
-// Đường dẫn: cukkluv/frontend/src/pages/RecipePage/RecipeSearchResults.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScrollList from '../../components/InfiniteScroll';
