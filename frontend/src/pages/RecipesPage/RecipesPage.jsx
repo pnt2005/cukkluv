@@ -76,14 +76,14 @@ export default function RecipesPage() {
               />
 
               <RecipeSection
-                title="CÔNG THỨC CỦA CUKKLUV"
+                title="CUKKLUV'S RECIPES"
                 recipes={cukkluvsRecipes}
                 onRecipeClick={handleRecipeClick}
               />
 
               {currentUser && (
                 <RecipeSection
-                  title={`CÔNG THỨC CỦA ${currentUser.toUpperCase()}`}
+                  title={`${currentUser.toUpperCase()}'S RECIPES`}
                   recipes={userRecipes}
                   onRecipeClick={handleRecipeClick}
                 />
