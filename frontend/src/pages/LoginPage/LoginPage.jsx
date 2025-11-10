@@ -17,6 +17,7 @@ export default function LoginPage() {
       const data = await authAPI.login(username, password);
       if (data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("username", username);
         showSuccess("Login successful! Redirecting...");
         setTimeout(() => (window.location.href = "/"), 1500);
       } else {

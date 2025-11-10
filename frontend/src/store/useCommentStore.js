@@ -84,4 +84,29 @@ export const useCommentStore = create((set, get) => ({
     const currentCount = post?.comment_count || 0;
     postStore.updateCommentCount(postId, currentCount + 1);
   },
+
+  editComment: async (commentId, content) => {
+    const updatedComment = await commentsAPI.updateComment(commentId, content);
+    const updateCommentContent = (items) =>
+      items.map((item) => {
+        if (item.id === commentId) {
+          return { ...item, content: updatedComment.content };
+        }
+        if (item.replies && item.replies.length) {
+          return { ...item, replies: updateCommentContent(item.replies) };
+        }
+        return item;
+      });
+
+    set((state) => {
+      const newCommentsByPost = {};
+      for (const [postId, postData] of Object.entries(state.commentsByPost)) {
+        newCommentsByPost[postId] = {
+          ...postData,
+          results: updateCommentContent(postData.results),
+        };
+      }
+      return { commentsByPost: newCommentsByPost };
+    });
+  },
 }));
