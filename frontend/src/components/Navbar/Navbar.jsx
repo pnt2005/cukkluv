@@ -5,7 +5,7 @@ import CreatePostModal from "./CreatePostModal.jsx";
 function Navbar() {
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
         <div className="container-fluid">
           <Link className="navbar-brand fw-bold text-warning" to="/">
             CukkLuv🍲
