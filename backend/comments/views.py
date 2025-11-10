@@ -38,18 +38,19 @@ class CommentListCreateView(APIView):
 
 class CommentDetailView(APIView):
     def get_permissions(self):
-        if self.request.method == 'POST':
+        if self.request.method == 'GET':
+            return []
+        else:
             return [IsAuthenticated()]
-        return []
     
     def get(self, request, comment_id):
         comment = get_object_or_404(Comment, id=comment_id)
         serializer = CommentSerializer(comment)
         return Response(serializer.data)
 
-    def put(self, request, comment_id):
+    def patch(self, request, comment_id):
         comment = get_object_or_404(Comment, id=comment_id, user=request.user)
-        serializer = CommentSerializer(comment, data=request.data)
+        serializer = CommentSerializer(comment, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()

@@ -30,18 +30,19 @@ class PostListCreateView(APIView):
 
 class PostDetailView(APIView):
     def get_permissions(self):
-        if self.request.method == 'POST':
+        if self.request.method == 'GET':
+            return []
+        else:
             return [IsAuthenticated()]
-        return []
     
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         serializer = PostSerializer(post, context={'request': request})
         return Response(serializer.data)
     
-    def put(self, request, pk):
+    def patch(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        serializer = PostSerializer(post, data=request.data)
+        serializer = PostSerializer(post, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
