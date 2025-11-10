@@ -12,6 +12,7 @@ urlpatterns = [
     path('recipes/', include('recipes.urls')),
     path('comments/', include('comments.urls')),
     path('likes/', include('likes.urls')),
+    path('tags/', include('tags.urls')),
 ]
 
 if settings.DEBUG:
