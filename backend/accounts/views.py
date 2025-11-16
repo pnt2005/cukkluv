@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from accounts.serializers import RegisterSerializer, UserSerializer
+from accounts.models import Profile
+from accounts.serializers import ProfileSerializer, UserProfileSerializer
 
 class LoginView(APIView):
     def post(self, request):
@@ -43,8 +45,8 @@ class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        serializer = UserSerializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = UserSerializer(request.user, context={'request': request})
+        return Response(serializer.data)
     
     def patch(self, request):
         """Cập nhật một phần thông tin user"""
@@ -88,3 +90,4 @@ class ChangePasswordView(APIView):
 
         return Response({'message': 'Password changed successfully. Please log in again.'},
                         status=status.HTTP_200_OK)
+    
