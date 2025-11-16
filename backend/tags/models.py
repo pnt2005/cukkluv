@@ -28,4 +28,4 @@ class PostTag(models.Model):
         unique_together = ('post', 'tag')
 
     def __str__(self):
-        return f"{self.post.title} - {self.tag.name}"
+        return f"{self.post.content} - {self.tag.name}"

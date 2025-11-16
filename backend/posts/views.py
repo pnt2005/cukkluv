@@ -15,7 +15,10 @@ class PostListCreateView(APIView):
     def get(self, request):
         paginator = PageNumberPagination()
         paginator.page_size = 5
+        tag_name = request.query_params.get('tag', None)
         posts = Post.objects.all().order_by('-created_at')
+        if tag_name:
+            posts = posts.filter(posttag__tag__name=tag_name).distinct()
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
