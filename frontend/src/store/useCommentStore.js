@@ -109,4 +109,35 @@ export const useCommentStore = create((set, get) => ({
       return { commentsByPost: newCommentsByPost };
     });
   },
+
+  toggleLike: async (commentId, postId) => {
+    const updated = await commentsAPI.toggleLike(commentId);
+    const updateLike = (items) =>
+      items.map((item) => {
+        if (item.id === commentId) {
+          return {
+            ...item,
+            user_liked: updated.liked,
+            like_count: updated.like_count,
+          };
+        }
+        if (item.replies?.length) {
+          return { ...item, replies: updateLike(item.replies) };
+        }
+        return item;
+      });
+    set((state) => {
+      const postComments = state.commentsByPost[postId];
+      if (!postComments) return state;
+      return {
+        commentsByPost: {
+          ...state.commentsByPost,
+          [postId]: {
+            ...postComments,
+            results: updateLike(postComments.results),
+          },
+        },
+      };
+    });
+  },
 }));
