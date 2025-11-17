@@ -17,7 +17,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_replies(self, obj):
         replies = obj.replies.all().order_by('created_at')
-        return CommentSerializer(replies, many=True).data
+        return CommentSerializer(replies, many=True, context=self.context).data
     
     def get_like_count(self, obj):
         return obj.likes.count()

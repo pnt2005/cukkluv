@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import { usePostStore } from "./usePostStore.js";
 import { commentsAPI } from "../utils/api.js";
+import { insertReply, updateCommentContent, updateLocalLike } from "../utils/reply.js";
 
 export const useCommentStore = create((set, get) => ({
   commentsByPost: {},
+
   fetchComments: async (postId, page = 1) => {
     const data = await commentsAPI.fetchComments(postId, page);
     set((state) => {
@@ -25,107 +27,24 @@ export const useCommentStore = create((set, get) => ({
     const newComment = await commentsAPI.addComment(postId, content);
     set((state) => {
       const existing = state.commentsByPost[postId]?.results || [];
-      const updatedResults = [newComment, ...existing];
       return {
         commentsByPost: {
           ...state.commentsByPost,
           [postId]: {
             ...state.commentsByPost[postId],
-            results: updatedResults,
+            results: [newComment, ...existing],
           },
         },
       };
     });
-    //Gọi sang usePostStore để tăng comment_count
+
     const postStore = usePostStore.getState();
     const post = postStore.posts.find((p) => p.id === postId);
-    const currentCount = post?.comment_count || 0;
-    postStore.updateCommentCount(postId, currentCount + 1);
+    postStore.updateCommentCount(postId, (post?.comment_count || 0) + 1);
   },
 
   addReply: async (postId, parentId, content) => {
     const newReply = await commentsAPI.addReply(postId, parentId, content);
-
-    // helper đệ quy: chèn reply vào đúng comment cha và tăng reply_count
-    const insertReply = (items) => {
-      return items.map((item) => {
-        if (item.id === parentId) {
-          const replies = item.replies || [];
-          return {
-            ...item,
-            replies: [newReply, ...replies],
-            reply_count: (item.reply_count || 0) + 1,
-          };
-        }
-        if (item.replies && item.replies.length) {
-          return { ...item, replies: insertReply(item.replies) };
-        }
-        return item;
-      });
-    };
-
-    set((state) => {
-      const postComments = state.commentsByPost[postId];
-      if (!postComments) return state; // nếu chưa load comments thì không làm gì
-      const updatedResults = insertReply(postComments.results || []);
-      return {
-        commentsByPost: {
-          ...state.commentsByPost,
-          [postId]: {
-            ...postComments,
-            results: updatedResults,
-          },
-        },
-      };
-    });
-    //Gọi sang usePostStore để tăng comment_count
-    const postStore = usePostStore.getState();
-    const post = postStore.posts.find((p) => p.id === postId);
-    const currentCount = post?.comment_count || 0;
-    postStore.updateCommentCount(postId, currentCount + 1);
-  },
-
-  editComment: async (commentId, content) => {
-    const updatedComment = await commentsAPI.updateComment(commentId, content);
-    const updateCommentContent = (items) =>
-      items.map((item) => {
-        if (item.id === commentId) {
-          return { ...item, content: updatedComment.content };
-        }
-        if (item.replies && item.replies.length) {
-          return { ...item, replies: updateCommentContent(item.replies) };
-        }
-        return item;
-      });
-
-    set((state) => {
-      const newCommentsByPost = {};
-      for (const [postId, postData] of Object.entries(state.commentsByPost)) {
-        newCommentsByPost[postId] = {
-          ...postData,
-          results: updateCommentContent(postData.results),
-        };
-      }
-      return { commentsByPost: newCommentsByPost };
-    });
-  },
-
-  toggleLike: async (commentId, postId) => {
-    const updated = await commentsAPI.toggleLike(commentId);
-    const updateLike = (items) =>
-      items.map((item) => {
-        if (item.id === commentId) {
-          return {
-            ...item,
-            user_liked: updated.liked,
-            like_count: updated.like_count,
-          };
-        }
-        if (item.replies?.length) {
-          return { ...item, replies: updateLike(item.replies) };
-        }
-        return item;
-      });
     set((state) => {
       const postComments = state.commentsByPost[postId];
       if (!postComments) return state;
@@ -134,10 +53,48 @@ export const useCommentStore = create((set, get) => ({
           ...state.commentsByPost,
           [postId]: {
             ...postComments,
-            results: updateLike(postComments.results),
+            results: insertReply(postComments.results, parentId, newReply),
           },
         },
       };
     });
+
+    const postStore = usePostStore.getState();
+    const post = postStore.posts.find((p) => p.id === postId);
+    postStore.updateCommentCount(postId, (post?.comment_count || 0) + 1);
+  },
+
+  editComment: async (commentId, content) => {
+    const updatedComment = await commentsAPI.updateComment(commentId, content);
+    set((state) => {
+      const newCommentsByPost = {};
+      for (const [postId, postData] of Object.entries(state.commentsByPost)) {
+        newCommentsByPost[postId] = {
+          ...postData,
+          results: updateCommentContent(postData.results, commentId, updatedComment.content),
+        };
+      }
+      return { commentsByPost: newCommentsByPost };
+    });
+  },
+
+  toggleLike: async (commentId, postId) => {
+    const { commentsByPost } = get();
+    const postComments = commentsByPost[postId];
+    if (!postComments) return;
+    set((state) => ({
+      commentsByPost: {
+        ...state.commentsByPost,
+        [postId]: {
+          ...postComments,
+          results: updateLocalLike(postComments.results, commentId),
+        },
+      },
+    }));
+    try {
+      await commentsAPI.toggleLike(commentId);
+    } catch (err) {
+      console.error("Toggle like failed:", err);
+    }
   },
 }));
