@@ -28,7 +28,7 @@ const RecipeSection = ({ title, recipes, onRecipeClick }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <h2 className="fw-bold mb-3 text-light" style={{ fontSize: "25px", WebkitTextStroke: "1.5px black" }}>
+      <h2 className="fw-bold mb-3 text-dark" style={{ fontSize: "25px", WebkitTextStroke: "1.5px black" }}>
         {title}
       </h2>
       <div className="position-relative">

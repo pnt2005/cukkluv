@@ -1,6 +1,7 @@
 import LikeButton from "../../components/LikeButton.jsx";
 import { MessageCircle } from "lucide-react";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { timeAgo } from "../../utils/time.js";
 
 export default function PostCard({ post, onClick }) {
   return (
@@ -10,9 +11,10 @@ export default function PostCard({ post, onClick }) {
       onClick={onClick}
     >
       <div className="d-flex align-items-center mb-2 p-2">
+        <img src={`${API_BASE_URL}${post.author.avatar}`} alt="Avatar" className="rounded-circle me-2" style={{ width: "40px", height: "40px", objectFit: "cover" }} />
         <div className="fw-bold me-2">{post.author.username}</div>
         <div className="text-muted small">
-          {new Date(post.created_at).toLocaleString()}
+          {timeAgo(post.created_at)}
         </div>
       </div>
       <img
@@ -21,7 +23,7 @@ export default function PostCard({ post, onClick }) {
         className="img-fluid rounded mb-2"
         style={{ maxHeight: "400px", objectFit: "cover", width: "100%" }}
       />
-      <div className="d-flex justify-content-between align-items-center p-2">
+      <div className="d-flex align-items-center gap-3 p-2">
         <LikeButton
           postId={post.id}
         />

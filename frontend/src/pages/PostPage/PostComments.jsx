@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useCommentStore } from "../../store/useCommentStore.js";
-import CommentList from "./components/CommentList.jsx";
+import CommentList from "./comment/CommentList.jsx";
 
 export default function PostComments({ postId }) {
   const commentInputRef = useRef();

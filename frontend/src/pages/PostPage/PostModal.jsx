@@ -5,6 +5,7 @@ import { MessageCircle } from "lucide-react";
 import { usePostStore } from "../../store/usePostStore.js";
 import EditPostModal from "./EditPostModal.jsx";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { timeAgo } from "../../utils/time.js";
 
 export default function PostModal({ postId, onClose }) {
   const { posts } = usePostStore();
@@ -56,8 +57,13 @@ export default function PostModal({ postId, onClose }) {
               {/* Bên phải */}
               <div className="col-5 d-flex flex-column p-3">
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                  <strong>{post.author.username}</strong>
-
+                  <div className="d-flex align-items-center">
+                    <img src={`${API_BASE_URL}${post.author.avatar}`} alt="Avatar" className="rounded-circle me-2" style={{ width: "40px", height: "40px", objectFit: "cover" }} />
+                    <strong className="fw-bold me-2">{post.author.username}</strong>
+                    <div className="text-muted small">
+                      {timeAgo(post.created_at)}
+                    </div>
+                  </div>
                   <div className="d-flex align-items-center gap-2">
                     {/* Nút sửa chỉ hiện nếu là tác giả */}
                     {post.author.username === localStorage.getItem("username") && (

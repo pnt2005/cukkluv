@@ -19,7 +19,7 @@ class CommentListCreateView(APIView):
         paginator.page_size = 10
         comments = Comment.objects.filter(post__id=post_id, parent=None).order_by('-created_at')
         result_page = paginator.paginate_queryset(comments, request)
-        serializer = CommentSerializer(result_page, many=True)
+        serializer = CommentSerializer(result_page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request, post_id):
@@ -45,7 +45,7 @@ class CommentDetailView(APIView):
     
     def get(self, request, comment_id):
         comment = get_object_or_404(Comment, id=comment_id)
-        serializer = CommentSerializer(comment)
+        serializer = CommentSerializer(comment, context={'request': request})
         return Response(serializer.data)
 
     def patch(self, request, comment_id):

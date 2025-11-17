@@ -12,7 +12,11 @@ class Like(models.Model):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='likes', null=True, blank=True)
 
     class Meta:
-        unique_together = ('user', 'recipe', 'post', 'comment')
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'post'], name='unique_user_post_like'),
+            models.UniqueConstraint(fields=['user', 'recipe'], name='unique_user_recipe_like'),
+            models.UniqueConstraint(fields=['user', 'comment'], name='unique_user_comment_like'),
+        ]
     def __str__(self):
         if self.recipe:
             return f'{self.user.username} liked recipe {self.recipe.title}'
