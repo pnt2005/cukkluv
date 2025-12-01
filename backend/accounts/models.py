@@ -11,7 +11,7 @@ class Profile(models.Model):
         upload_to=user_avatar_path, 
         null=True,
         blank=True, 
-        default='default_avatar.png'
+        default='default_avatar.jpg'
     )
 
     def __str__(self):
