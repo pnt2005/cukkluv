@@ -11,7 +11,6 @@ export default function CommentItem({ comment, postId, depth = 0 }) {
   const [openReply, setOpenReply] = useState(false);
   const [editing, setEditing] = useState(false);
   const { addReply, editComment, toggleLike } = useCommentStore();
-
   const handleSendReply = async (content) => {
     if (!content) return;
     try {
@@ -21,7 +20,6 @@ export default function CommentItem({ comment, postId, depth = 0 }) {
       console.error(err);
     }
   };
-
   const handleEdit = async (newContent) => {
     if (!newContent) return;
     try {
@@ -32,85 +30,84 @@ export default function CommentItem({ comment, postId, depth = 0 }) {
     }
   };
 
-return (
-  <div style={{ marginLeft: depth * 18 }} className="mb-3">
-    <div className="d-flex">
-      {/* Avatar trái */}
-      <img
-        src={`${API_BASE_URL}${comment.user.avatar}`}
-        className="rounded-circle me-2"
-        style={{
-          width: "40px",
-          height: "40px",
-          objectFit: "cover"
-        }}
-      />
-      {/* Nội dung comment phải */}
-      <div style={{ flex: 1 }}>
-        {/* Username + Content cùng 1 dòng */}
-        <div className="d-flex align-items-start gap-2">
-          <b>{comment.user.username}</b>
-          <div style={{ whiteSpace: "pre-wrap" }}>
-            {editing ? (
-              <EditCommentForm
-                initialValue={comment.content}
-                onSave={handleEdit}
-                onCancel={() => setEditing(false)}
-              />
-            ) : (
-              comment.content
-            )}
-          </div>
-        </div>
-        {/* Time + Actions */}
-        {!editing && (
-          <div className="d-flex align-items-center gap-3 mt-1">
-            <span className="text-muted small">{timeAgo(comment.created_at)}</span>
-            <button
-              className="btn btn-link p-0 d-flex align-items-center text-decoration-none small"
-              onClick={() => toggleLike(comment.id, postId)}
-            >
-              <Heart
-                size={16}
-                fill={comment.user_liked ? "red" : "none"}
-                className="me-1"
-              />
-              {comment.like_count}
-            </button>
-            <button
-              className="btn p-0"
-              onClick={() => setOpenReply((s) => !s)}
-            >
-              <MessageCircleReply size={20}/>
-            </button>
-            {comment.user.username === localStorage.getItem("username") && (
+  return (
+    <div style={{ marginLeft: depth * 18 }} className="mb-3">
+      <div className="d-flex">
+        <img
+          src={`${API_BASE_URL}${comment.user.avatar}`}
+          className="rounded-circle me-2"
+          style={{
+            width: "40px",
+            height: "40px",
+            objectFit: "cover"
+          }}
+        />
+        <div style={{ flex: 1 }}>
+          <div className="d-flex align-items-start">
+            <div className="d-flex align-items-start gap-2" style={{ flex: 1 }}>
+              <b>{comment.user.username}</b>
+              <div style={{ whiteSpace: "pre-wrap" }}>
+                {editing ? (
+                  <EditCommentForm
+                    initialValue={comment.content}
+                    onSave={handleEdit}
+                    onCancel={() => setEditing(false)}
+                  />
+                ) : (
+                  comment.content
+                )}
+              </div>
+            </div>
+            {!editing && (
               <button
-                className="btn p-0 "
-                onClick={() => setEditing(true)}
+                className="btn p-0 d-flex align-items-center ms-auto"
+                onClick={() => toggleLike(comment.id, postId)}
+                style={{ marginLeft: "12px" }}
               >
-                <PencilIcon size={20}/>
+                <Heart
+                  size={16}
+                  fill={comment.user_liked ? "red" : "none"}
+                  className="me-1"
+                />
+                {comment.like_count}
               </button>
             )}
           </div>
-        )}
-        {/* Reply input */}
-        {openReply && (
-          <ReplyInput
-            onSend={handleSendReply}
-            onCancel={() => setOpenReply(false)}
-          />
-        )}
-        {/* Replies */}
-        {(comment.replies || []).map((r) => (
-          <CommentItem
-            key={r.id}
-            comment={r}
-            postId={postId}
-            depth={depth + 1}
-          />
-        ))}
+          {!editing && (
+            <div className="d-flex align-items-center mt-1 gap-3">
+              <span className="text-muted small">{timeAgo(comment.created_at)}</span>
+              <button
+                className="btn p-0"
+                onClick={() => setOpenReply((s) => !s)}
+              >
+                <MessageCircleReply size={18} />
+              </button>
+              {comment.user.username === localStorage.getItem("username") && (
+                <button
+                  className="btn p-0"
+                  onClick={() => setEditing(true)}
+                >
+                  <PencilIcon size={18} />
+                </button>
+              )}
+            </div>
+          )}
+          {openReply && (
+            <ReplyInput
+              onSend={handleSendReply}
+              onCancel={() => setOpenReply(false)}
+            />
+          )}
+          {(comment.replies || []).map((r) => (
+            <CommentItem
+              key={r.id}
+              comment={r}
+              postId={postId}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }

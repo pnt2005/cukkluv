@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import PostComments from "./PostComments";
-import LikeButton from "../../components/LikeButton.jsx";
 import { MessageCircle } from "lucide-react";
 import { usePostStore } from "../../store/usePostStore.js";
 import EditPostModal from "./EditPostModal.jsx";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import { timeAgo } from "../../utils/time.js";
+import { Heart } from "lucide-react";
 
 export default function PostModal({ postId, onClose }) {
   const { posts } = usePostStore();
   const globalPost = posts.find((p) => p.id === postId);
   const [post, setPost] = useState(globalPost);
   const [showEditModal, setShowEditModal] = useState(false);
+  const { toggleLike } = usePostStore();
 
   useEffect(() => {
     if (globalPost) {
@@ -87,7 +88,16 @@ export default function PostModal({ postId, onClose }) {
                 </div>
 
                 <div className="d-flex align-items-center gap-3 mb-2">
-                  <LikeButton postId={post.id} />
+                  <button
+                    className="btn p-0 d-flex align-items-center text-decoration-none"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLike(post.id);
+                    }}
+                  >
+                    <Heart fill={post.user_liked ? "red" : "none"} className="me-1" />
+                    {post.like_count}
+                  </button>
                   <span>
                     <MessageCircle /> {post.comment_count}
                   </span>

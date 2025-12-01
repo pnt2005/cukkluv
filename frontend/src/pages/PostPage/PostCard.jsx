@@ -1,9 +1,11 @@
-import LikeButton from "../../components/LikeButton.jsx";
 import { MessageCircle } from "lucide-react";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import { timeAgo } from "../../utils/time.js";
+import { usePostStore } from "../../store/usePostStore.js";
+import { Heart } from "lucide-react";
 
 export default function PostCard({ post, onClick }) {
+  const { toggleLike } = usePostStore();
   return (
     <div
       className="card mb-4 shadow-sm mx-auto"
@@ -24,9 +26,16 @@ export default function PostCard({ post, onClick }) {
         style={{ maxHeight: "400px", objectFit: "cover", width: "100%" }}
       />
       <div className="d-flex align-items-center gap-3 p-2">
-        <LikeButton
-          postId={post.id}
-        />
+        <button
+          className="btn p-0 d-flex align-items-center text-decoration-none"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleLike(post.id);
+          }}
+        >
+          <Heart fill={post.user_liked ? "red" : "none"} className="me-1" />
+          {post.like_count}
+        </button>
         <div>
           <MessageCircle /> {post.comment_count}
         </div>
