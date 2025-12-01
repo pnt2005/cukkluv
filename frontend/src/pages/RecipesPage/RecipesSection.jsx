@@ -62,7 +62,7 @@ const RecipeSection = ({ title, recipes, onRecipeClick }) => {
             <div key={recipe.id} onClick={() => onRecipeClick(recipe.id)}>
               <RecipeCard
                 recipe={recipe}
-                showAuthor={title === "CÔNG THỨC CỦA CỘNG ĐỒNG"}
+                showAuthor={title === "COMMUNITY'S RECIPES"}
                 layout="vertical"
               />
             </div>
