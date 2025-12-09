@@ -1,28 +1,24 @@
-import React from 'react';
-import { Search, X } from 'lucide-react';
+import React, { useState } from "react";
+import { Search, X } from "lucide-react";
 
-export default function SearchBar({ 
-  value, 
-  onChange, 
-  onSearch, 
+export default function SearchBar({
+  onSearch,
   onClear,
   placeholder = "Tìm kiếm...",
-  className = ""
+  className = "",
 }) {
+  const [inputValue, setInputValue] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (onSearch) {
-      onSearch(value);
+      onSearch(inputValue);
     }
   };
 
   const handleClear = () => {
-    if (onChange) {
-      onChange({ target: { value: "" } });
-    }
-    if (onClear) {
-      onClear();
-    }
+    setInputValue("");
+    if (onClear) onClear();
   };
 
   return (
@@ -32,23 +28,20 @@ export default function SearchBar({
           type="text"
           className="form-control pe-5"
           placeholder={placeholder}
-          value={value}
-          onChange={onChange}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
         />
-        {/* Nút X để clear search */}
-        {value && (
-          <button
-            type="button"
-            onClick={handleClear}
-            className="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted"
-            style={{ textDecoration: 'none' }}
-          >
-            <X size={18} />
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={handleClear}
+          className="btn btn-link position-absolute top-50 translate-middle-y text-muted"
+          style={{ textDecoration: "none", zIndex: 10, padding: 0, right: "8px" }}
+        >
+          <X size={18} />
+        </button>
       </div>
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         className="btn btn-warning text-white d-flex align-items-center gap-2"
       >
         <Search size={18} />

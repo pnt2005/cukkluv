@@ -63,3 +63,8 @@ export const commentsAPI = {
   updateComment: (commentId, content) => apiPatch(`comments/${commentId}/`, { content }),
   deleteComment: (commentId) => apiDelete(`comments/${commentId}/`),
 };
+
+export const recipesAPI = {
+  fetchAllRecipes: () => apiGet(`recipes/`),
+  fetchRecipeByID: (id) => apiGet(`recipes/${id}/`),
+}

@@ -3,25 +3,41 @@ from rest_framework.response import Response
 from recipes.models import Recipe
 from django.shortcuts import get_object_or_404
 from recipes.serializer import RecipeSerializer
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.db.models import Q
+
+@api_view(['GET'])
+def RecipeSearch(request):
+    """
+    GET /api/recipes/search/?q=keyword
+    Tìm kiếm recipes theo tên
+    """
+    query = request.GET.get('q', '').strip()
+    
+    if not query:
+        return Response(serializer.errors, status=404)
+    
+    # Tìm kiếm không phân biệt hoa thường, có dấu
+    recipes = Recipe.objects.filter(
+        Q(name__icontains=query)
+    ).distinct().order_by('-created_at')
+    
+    serializer = RecipeSerializer(recipes, many=True, context={'request': request})
+    return Response(serializer.data)
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def RecipeListCreate(request):
 
     """
-    GET /api/recipes/ - Lấy danh sách recipes khi tìm kiếm và hiển thị 5 recipe/trang (phân trang)
+    GET /api/recipes/ - Lấy danh sách recipes 
     POST /api/recipes/ - Tạo recipe mới
     """
 
     if request.method == 'GET':
-        paginator = PageNumberPagination()
-        paginator.page_size = 5
         recipes = Recipe.objects.all().order_by('-created_at')
-        result_page = paginator.paginate_queryset(recipes, request)
-        serializer = RecipeSerializer(result_page, many=True, context={'request': request})
-        return paginator.get_paginated_response(serializer.data)
+        serializer = RecipeSerializer(recipes, many=True, context={'request': request})
+        return Response(serializer.data)
     
     elif request.method == 'POST':
         # Tạo recipe mới
