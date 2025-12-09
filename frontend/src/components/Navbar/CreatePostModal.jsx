@@ -7,6 +7,7 @@ export default function CreatePostModal() {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [tags, setTags] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,6 +22,7 @@ export default function CreatePostModal() {
     const formData = new FormData();
     formData.append("content", content);
     formData.append("image", image);
+    formData.append("tags", tags);
 
     try {
       await postsAPI.createPost(formData);
@@ -107,6 +109,17 @@ export default function CreatePostModal() {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                   ></textarea>
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Tags (comma separated)</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Ex: food,travel,fun"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                  />
                 </div>
 
                 {error && <div className="text-danger small">{error}</div>}
