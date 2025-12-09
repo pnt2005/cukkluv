@@ -6,6 +6,7 @@ import EditPostModal from "./EditPostModal.jsx";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import { timeAgo } from "../../utils/time.js";
 import { Heart } from "lucide-react";
+import { postsAPI } from "../../utils/api.js";
 
 export default function PostModal({ postId, onClose }) {
   const { posts } = usePostStore();
@@ -21,17 +22,12 @@ export default function PostModal({ postId, onClose }) {
   }, [globalPost]);
 
   useEffect(() => {
+    async function fetchPost() {
+      const res = await postsAPI.getPostDetails(postId);
+      setPost(res.json());
+    }
     if (!globalPost) {
-      fetch(`${API_BASE_URL}/posts/${postId}/`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${localStorage.getItem("token")}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setPost(data);
-        });
+      fetchPost();
     }
   }, [postId, globalPost]);
 

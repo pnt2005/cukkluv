@@ -52,6 +52,7 @@ export const postsAPI = {
   createPost: (formData) => apiPost(`posts/`, formData),
   updatePost: (postId, formData) => apiPatch(`posts/${postId}/`, formData),
   deletePost: (postId) => apiDelete(`posts/${postId}/`),
+  getPostDetails: (postId) => apiGet(`posts/${postId}/`),
 };
 
 export const commentsAPI = {
