@@ -2,24 +2,15 @@ import { Link } from "react-router-dom";
 import CreateSelectModal from "./CreateSelectModal.jsx";
 import CreatePostModal from "./CreatePostModal.jsx";
 import { useEffect, useState } from "react";
-import { authAPI } from "../../utils/api.js";
+import { useAuthStore } from "../../store/useAuthStore";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Navbar() {
-  const [user, setUser] = useState(null);
+  const { user, fetchUser } = useAuthStore();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const data = await authAPI.getCurrentUser();
-        setUser(data);
-      } catch (err) {
-        setUser(null); // chưa login
-      }
-    };
     fetchUser();
   }, []);
-
 
   return (
     <>

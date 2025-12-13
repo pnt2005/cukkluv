@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import PostModal from "../PostPage/PostModal.jsx";
 import PostCard from "../PostPage/PostCard.jsx";
 import RecipeCard from "../RecipesPage/RecipesCard.jsx";
+import { useAuthStore } from "../../store/useAuthStore";
+import EditProfileModal from "./EditProfileModal.jsx";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function ProfilePage() {
@@ -15,6 +17,7 @@ function ProfilePage() {
   const { posts, fetchPosts } = usePostStore();
   const { myRecipes, fetchRecipes, loading: recipeLoading } = useRecipeStore();
   const [selectedPostId, setSelectedPostId] = useState(null);
+  const { logout } = useAuthStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,10 +41,9 @@ function ProfilePage() {
   };
 
   const handleLogout = () => {
-    localStorage.clear(); 
-    //navigate("/login");
-    window.location.href = "/login";
-    };
+    logout();
+    navigate("/login");
+  };
 
 
   return (
@@ -68,7 +70,8 @@ function ProfilePage() {
                 {/* EDIT PROFILE */}
                 <button
                     className="btn btn-outline-secondary w-100 mb-2"
-                    onClick={() => navigate("/profile/edit")}
+                    data-bs-toggle="modal"
+                    data-bs-target="#editProfileModal"
                 >
                     Edit profile
                 </button>
@@ -145,6 +148,7 @@ function ProfilePage() {
             )}
             </div>
         </div>
+        <EditProfileModal />
     </div>
     );
 }

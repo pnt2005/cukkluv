@@ -45,6 +45,7 @@ export const authAPI = {
   register: (userData) => apiPost(`accounts/register/`, userData),
   logout: () => apiPost(`accounts/logout/`),
   getCurrentUser: () => apiGet(`accounts/me/`),
+  updateProfile: (formData) => apiPatch(`accounts/me/`, formData),
 };
 
 export const postsAPI = {
