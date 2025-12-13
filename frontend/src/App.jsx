@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage/RegisterPage';
 import PostPage from './pages/PostPage/PostPage';
 import RecipesPage from './pages/RecipesPage/RecipesPage.jsx';
 import RecipesDetail from './pages/RecipesPage/RecipesDetail.jsx';
+import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/posts" element={<PostPage />} />
           <Route path="/recipes" element={<RecipesPage />} />
           <Route path="/recipes/:id" element={<RecipesDetail />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </div>
 
