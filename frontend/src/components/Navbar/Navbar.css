@@ -1,0 +1,18 @@
+.navbar-brand {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+}
+.nav-link {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+}
+
+.nav-link:hover {
+  color: #e63946 !important;
+}
+
+.navbar .btn {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+}
+
