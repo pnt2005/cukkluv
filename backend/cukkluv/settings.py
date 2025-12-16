@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'saves',
     'corsheaders',
     'tags',
+    'nested_admin',
 ]
 
 MIDDLEWARE = [

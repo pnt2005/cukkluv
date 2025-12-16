@@ -15,7 +15,10 @@ def RecipeSearch(request):
     query = request.GET.get('q', '').strip()
     
     if not query:
-        return Response(serializer.errors, status=404)
+        return Response(
+            {"error": "Query is required"}, 
+            status=400
+        )
     
     # Tìm kiếm không phân biệt hoa thường, có dấu
     recipes = Recipe.objects.filter(
@@ -35,13 +38,13 @@ def RecipeListCreate(request):
     """
 
     if request.method == 'GET':
-        recipes = Recipe.objects.all().order_by('-created_at')
+        recipes = Recipe.objects.all().prefetch_related('steps').order_by('-created_at')
         serializer = RecipeSerializer(recipes, many=True, context={'request': request})
         return Response(serializer.data)
     
     elif request.method == 'POST':
         # Tạo recipe mới
-        serializer = RecipeSerializer(data=request.data)
+        serializer = RecipeSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             # Tự động gán author = user hiện tại
             serializer.save(author=request.user)
@@ -58,7 +61,7 @@ def RecipeDetail(request, pk):
     DELETE /api/recipes/{id}/ - Xóa recipe
     """
 
-    recipe = get_object_or_404(Recipe, pk=pk)
+    recipe = get_object_or_404(Recipe.objects.prefetch_related('steps'), pk=pk)
 
     if request.method == 'GET':
         # Tăng lượt xem mỗi khi người dùng truy cập chi tiết
@@ -76,7 +79,7 @@ def RecipeDetail(request, pk):
                 status=403
             )
         # Cập nhật recipe
-        serializer = RecipeSerializer(recipe, data=request.data, partial=(request.method == 'PATCH'))
+        serializer = RecipeSerializer(recipe, data=request.data, partial=(request.method == 'PATCH'), context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
