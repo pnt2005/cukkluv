@@ -30,15 +30,11 @@
       }
 
       try {
-        const data = await authAPI.register(JSON.stringify(form));
-        if (data.ok) {
-          showSuccess('Registration successful! Redirecting to login...');
-          navigate('/login');
-        } else {
-          showError('Registration failed');
-        }
+        const data = await authAPI.register(form);
+        showSuccess("Đăng ký thành công!");
+        navigate('/login');
       } catch (err) {
-        showError('An error occurred. Please try again later.');
+        showError("Đăng ký thất bại");
       }
     };
 
