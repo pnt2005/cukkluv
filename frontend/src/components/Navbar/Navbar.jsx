@@ -57,28 +57,51 @@ export default function Navbar() {
                 </button>
               </li>
 
+
               <li className="nav-item">
                 <Link className="nav-link text-warning" to="/recipes">
                   CÔNG THỨC
                 </Link>
               </li>
 
+
               <li className="nav-item">
                 <Link className="nav-link text-warning" to="/posts">
                   CỘNG ĐỒNG
                 </Link>
               </li>
+
+              {/* LOGIN / AVATAR */}
+
               <li className="nav-item">
-                <Link className="nav-link text-warning" to="/login">
-                  Login
-                </Link>
+                {user ? (
+                  <Link to="/profile" className="nav-link p-0">
+                    <img
+                      src={`${API_BASE_URL}${user.avatar}`}
+                      alt="avatar"
+                      className="rounded-circle"
+                      style={{
+                        width: 36,
+                        height: 36,
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Link>
+                ) : (
+                  <Link
+                  className="btn btn-warning rounded-pill px-3 ms-lg-2"
+                  to="/login"
+                >
+                    ĐĂNG NHẬP
+                  </Link>
+                )}
               </li>
             </ul>
           </div>
         </div>
       </nav>
 
-      {/* Modal chọn loại create */}
+      {/* Modals */}
       <CreateSelectModal />
       <CreatePostModal />
     </>

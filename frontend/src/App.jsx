@@ -7,6 +7,7 @@ import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import PostPage from "./pages/PostPage/PostPage";
 import RecipesPage from "./pages/RecipesPage/RecipesPage.jsx";
 import RecipesDetail from "./pages/RecipesPage/RecipesDetail.jsx";
+import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
 import Footer from "./components/Navbar/Footer.jsx";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -24,7 +25,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/posts" element={<PostPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/posts" element={<LayoutWithFooter><PostPage /></LayoutWithFooter>} />
           <Route path="/" element={<LayoutWithFooter><HomePage /></LayoutWithFooter>} />
           <Route path="/recipes" element={<LayoutWithFooter><RecipesPage /></LayoutWithFooter>} />
           <Route path="/recipes/:id" element={<LayoutWithFooter><RecipesDetail /></LayoutWithFooter>} />
