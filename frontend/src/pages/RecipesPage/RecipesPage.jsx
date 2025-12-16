@@ -66,7 +66,7 @@ export default function RecipesPage() {
       <div className="row justify-content-center">
         <div className="col-md-10">
           {/* Search */}
-          <div className="bg-white p-3 rounded shadow-sm mb-4">
+          <div className="mb-4">
             <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
           </div>
 

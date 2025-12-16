@@ -1,7 +1,4 @@
-import React from 'react';
 import { Eye, Clock } from 'lucide-react';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const RecipeCard = ({ recipe, showAuthor, layout = "vertical" }) => {
   // Layout dọc (dùng cho scroll ngang)
