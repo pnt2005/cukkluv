@@ -6,6 +6,7 @@ import EditPostModal from "./EditPostModal.jsx";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import { timeAgo } from "../../utils/time.js";
 import { Heart } from "lucide-react";
+import { postsAPI } from "../../utils/api.js";
 
 export default function PostModal({ postId, onClose }) {
   const { posts } = usePostStore();
@@ -21,17 +22,12 @@ export default function PostModal({ postId, onClose }) {
   }, [globalPost]);
 
   useEffect(() => {
+    async function fetchPost() {
+      const res = await postsAPI.getPostDetails(postId);
+      setPost(res.json());
+    }
     if (!globalPost) {
-      fetch(`${API_BASE_URL}/posts/${postId}/`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${localStorage.getItem("token")}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setPost(data);
-        });
+      fetchPost();
     }
   }, [postId, globalPost]);
 
@@ -42,11 +38,11 @@ export default function PostModal({ postId, onClose }) {
       {/* Modal nền */}
       <div className="modal-backdrop fade show"></div>
       <div className="modal fade show d-block" tabIndex="-1">
-        <div className="modal-dialog modal-xl modal-dialog-centered">
+        <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "850px" }}>
           <div className="modal-content" style={{ borderRadius: "10px" }}>
             <div className="d-flex flex-row">
               {/* Ảnh bên trái */}
-              <div className="col-7">
+              <div className="col-6">
                 <img
                   src={`${post.image}`}
                   alt="Post"
@@ -56,7 +52,7 @@ export default function PostModal({ postId, onClose }) {
               </div>
 
               {/* Bên phải */}
-              <div className="col-5 d-flex flex-column p-3">
+              <div className="col-6 d-flex flex-column p-3">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <div className="d-flex align-items-center">
                     <img src={`${API_BASE_URL}${post.author.avatar}`} alt="Avatar" className="rounded-circle me-2" style={{ width: "40px", height: "40px", objectFit: "cover" }} />
@@ -86,6 +82,19 @@ export default function PostModal({ postId, onClose }) {
                 <div className="mb-3">
                   <p className="mb-0">{post.content}</p>
                 </div>
+                {/* Tags */}
+                {post.tag_objects?.length > 0 && (
+                  <div className="mb-3 d-flex flex-wrap gap-2">
+                    {post.tag_objects.map((tag) => (
+                      <span
+                        key={tag.id}
+                        className="badge bg-secondary"
+                      >
+                        #{tag.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 <div className="d-flex align-items-center gap-3 mb-2">
                   <button

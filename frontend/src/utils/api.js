@@ -44,6 +44,8 @@ export const authAPI = {
   login: (username, password) => apiPost(`accounts/login/`, { username, password }),
   register: (userData) => apiPost(`accounts/register/`, userData),
   logout: () => apiPost(`accounts/logout/`),
+  getCurrentUser: () => apiGet(`accounts/me/`),
+  updateProfile: (formData) => apiPatch(`accounts/me/`, formData),
 };
 
 export const postsAPI = {
@@ -52,6 +54,7 @@ export const postsAPI = {
   createPost: (formData) => apiPost(`posts/`, formData),
   updatePost: (postId, formData) => apiPatch(`posts/${postId}/`, formData),
   deletePost: (postId) => apiDelete(`posts/${postId}/`),
+  getPostDetails: (postId) => apiGet(`posts/${postId}/`),
 };
 
 export const commentsAPI = {

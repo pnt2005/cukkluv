@@ -49,12 +49,22 @@ class MeView(APIView):
         return Response(serializer.data)
     
     def patch(self, request):
-        """Cập nhật một phần thông tin user"""
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'User partially updated', 'user': serializer.data}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        profile = user.profile
+
+        # update User
+        user.username = request.data.get("username", user.username)
+        user.email = request.data.get("email", user.email)
+        user.save()
+
+        # update avatar
+        avatar = request.FILES.get("avatar")
+        if avatar:
+            profile.avatar = avatar
+            profile.save()
+
+        serializer = UserSerializer(user, context={'request': request})
+        return Response(serializer.data, status=200)
 
     def delete(self, request):
         """Xóa tài khoản user"""

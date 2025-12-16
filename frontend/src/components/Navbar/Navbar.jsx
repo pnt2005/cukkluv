@@ -2,8 +2,17 @@ import { Link } from "react-router-dom";
 import CreateSelectModal from "./CreateSelectModal.jsx";
 import CreatePostModal from "./CreatePostModal.jsx";
 import "./Navbar.css";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "../../store/useAuthStore";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Navbar() {
+  const { user, fetchUser } = useAuthStore();
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
   return (
     <>
       <nav
@@ -59,13 +68,9 @@ export default function Navbar() {
                   CỘNG ĐỒNG
                 </Link>
               </li>
-
               <li className="nav-item">
-                <Link
-                  className="btn btn-warning rounded-pill px-3 ms-lg-2"
-                  to="/login"
-                >
-                  ĐĂNG NHẬP
+                <Link className="nav-link text-warning" to="/login">
+                  Login
                 </Link>
               </li>
             </ul>
@@ -73,7 +78,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Modals */}
+      {/* Modal chọn loại create */}
       <CreateSelectModal />
       <CreatePostModal />
     </>
