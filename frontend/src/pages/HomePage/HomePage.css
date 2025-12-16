@@ -1,44 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
+/* HomePage.css */
 
-.hero-section::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+/* --- Mission Section Single Rotating Image --- */
+
+.rotating-image-container {
+  width: 450px; 
+  height:450px;
+  margin: 0 auto;
+  position: relative;
+  /* Dùng overflow: hidden để cắt ảnh gọn gàng nếu cần */
+  overflow: hidden; 
+  /* Đặt vị trí ảnh xoay lên một chút cho đẹp */
+  top: 30px; 
+}
+
+.rotating-image {
+  position: absolute;
+  width: 100%; /* Chiếm 100% container */
   height: 100%;
-  background-image: url('/homepage.png'); /* ảnh đặt trong public/ */
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  filter: blur(0.5px) brightness(1);
-  z-index: -1;
+  border-radius: 50%; /* Làm ảnh tròn */
+  object-fit: cover;
+  
+  /* Căn giữa ảnh trong container */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  /* Áp dụng animation xoay 2D */
+  animation: rotateZ 8s linear infinite; 
 }
 
-.hero-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-  text-align: center;
-  padding: 20px;
+/* Animation xoay 2D (quay quanh trục Z) */
+@keyframes rotateZ {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-.hero-section h1 {
-  font-family: "Alex Brush", cursive;
-  font-size: 8rem;
-  font-weight: bold;
-  color: #fff;
-  text-shadow:
-    2px 2px 8px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(111, 207, 151, 0.2);
-  margin-bottom: 20px;
-  letter-spacing: 2px;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .hero-section h1 {
-    font-size: 2.5rem;
+  .rotating-image-container {
+    width: 180px; 
+    height: 180px; 
+    top: 20px; 
   }
 }
