@@ -60,7 +60,7 @@ export default function EditPostModal({ post, onClose }) {
         <div className="modal-content p-2">
           <div className="modal-header">
             <h5 className="modal-title text-primary fw-bold" id="editPostModalLabel">
-              Edit Post
+              Sửa bài viết
             </h5>
             <button
               type="button"
@@ -89,14 +89,14 @@ export default function EditPostModal({ post, onClose }) {
                     }}
                   />
                 ) : (
-                  <div className="text-muted small">No image selected</div>
+                  <div className="text-muted small">Chưa chọn ảnh</div>
                 )}
               </div>
 
               {/* Khung nội dung */}
               <div className="flex-grow-1">
                 <div className="mb-2">
-                  <label className="form-label fw-semibold">Change Image</label>
+                  <label className="form-label fw-semibold">Đổi ảnh</label>
                   <input
                     type="file"
                     className="form-control"
@@ -106,7 +106,7 @@ export default function EditPostModal({ post, onClose }) {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Content</label>
+                  <label className="form-label fw-semibold">Nội dung</label>
                   <textarea
                     className="form-control"
                     rows="4"
@@ -121,14 +121,14 @@ export default function EditPostModal({ post, onClose }) {
 
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={onClose}>
-                Cancel
+                Hủy
               </button>
               <button
                 type="submit"
                 className="btn btn-primary text-white"
                 disabled={loading}
               >
-                {loading ? "Saving..." : "Save Changes"}
+                {loading ? "Đang lưu..." : "Lưu thay đổi"}
               </button>
               <DeletePost postId={post.id}/>
             </div>

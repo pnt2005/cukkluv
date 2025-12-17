@@ -61,7 +61,7 @@ export default function RecipesDetail() {
     return (
       <div className="container mt-4 text-center">
         <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
+          <span className="visually-hidden">Đang tải...</span>
         </div>
       </div>
     );
@@ -220,10 +220,10 @@ export default function RecipesDetail() {
         setMainImagePreview(null);
       }
 
-      alert("Recipe updated successfully!");
+      alert("Cập nhật công thức thành công!");
     } catch (err) {
       console.error("Update failed:", err);
-      alert("Failed to update recipe");
+      alert("Lỗi");
     } finally {
       setSaving(false);
     }
@@ -250,7 +250,7 @@ export default function RecipesDetail() {
 
   const handleDeleteRecipe = async () => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this recipe? This action cannot be undone."
+      "Bạn có chắc chắn muốn xóa công thức này? Hành động này không thể hoàn tác."
     );
     
     if (!confirmed) return;
@@ -263,13 +263,13 @@ export default function RecipesDetail() {
       // Remove from store
       deleteRecipeFromStore(form.id);
       
-      alert("Recipe deleted successfully!");
+      alert("Xóa thành công!");
       
       // Navigate back to recipes list
       navigate("/recipes");
     } catch (err) {
       console.error("Delete failed:", err);
-      alert(`Failed to delete recipe: ${err.data?.detail || err.message}`);
+      alert(`Lỗi: ${err.data?.detail || err.message}`);
       setDeleting(false);
     }
   };
@@ -301,7 +301,7 @@ export default function RecipesDetail() {
           <div className="position-absolute bottom-0 end-0 p-3">
             <label className="btn btn-sm btn-primary">
               <Upload size={16} className="me-1" />
-              Change Image
+              Đổi ảnh
               <input
                 type="file"
                 accept="image/*"
@@ -353,7 +353,7 @@ export default function RecipesDetail() {
                       onClick={() => setEditMode(true)}
                     >
                       <Pencil size={16} className="me-1" />
-                      Edit
+                      Chỉnh sửa
                     </button>
 
                     <button
@@ -364,12 +364,12 @@ export default function RecipesDetail() {
                       {deleting ? (
                         <>
                           <span className="spinner-border spinner-border-sm me-1" />
-                          Deleting...
+                          Đang xóa...
                         </>
                       ) : (
                         <>
                           <X size={16} className="me-1" />
-                          Delete
+                          Xóa
                         </>
                       )}
                     </button>
@@ -396,13 +396,13 @@ export default function RecipesDetail() {
                 </span>
                 <span>
                   <Eye size={16} className="me-1" />
-                  {recipe.views} views
+                  {recipe.views} lượt xem
                 </span>
               </div>
 
               {/* DESCRIPTION */}
               <div className="mb-4">
-                <h5>Description</h5>
+                <h5>Mô tả</h5>
                 {editMode ? (
                   <textarea
                     className="form-control"
@@ -419,9 +419,9 @@ export default function RecipesDetail() {
               {/* INGREDIENTS + PORTION */}
               <div className="mb-4">
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h5 className="m-0">Ingredients</h5>
+                  <h5 className="m-0">Nguyên liệu</h5>
                   <span className="text-muted small">
-                    Servings: {" "}
+                    Số phần: {" "}
                     {editMode ? (
                       <input
                         type="number"
@@ -460,13 +460,13 @@ export default function RecipesDetail() {
                 {/* STEPS */}
                 <div className="mb-4">
                   <h5 className="mb-3 d-flex justify-content-between align-items-center">
-                    Instructions
+                    Hướng dẫn
                     {editMode && (
                       <button
                         className="btn btn-sm btn-outline-primary"
                         onClick={addStep}
                       >
-                        + Add Step
+                        + Thêm bước
                       </button>
                     )}
                   </h5>
@@ -524,7 +524,7 @@ export default function RecipesDetail() {
                         {editMode && (
                           <label className="btn btn-sm btn-outline-secondary me-2">
                             <Upload size={14} className="me-1" />
-                            Add Image
+                            Thêm ảnh
                             <input
                               type="file"
                               accept="image/*"
@@ -545,7 +545,7 @@ export default function RecipesDetail() {
                             className="btn btn-sm btn-outline-danger"
                             onClick={() => removeStep(sIndex)}
                           >
-                            Remove Step
+                            Xóa bước
                           </button>
                         )}
                       </li>
@@ -565,12 +565,12 @@ export default function RecipesDetail() {
                     {saving ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2" />
-                        Saving...
+                        Đang lưu...
                       </>
                     ) : (
                       <>
                         <Save size={16} className="me-1" />
-                        Save Changes
+                        Lưu
                       </>
                     )}
                   </button>
@@ -581,7 +581,7 @@ export default function RecipesDetail() {
                     disabled={saving}
                   >
                     <X size={16} className="me-1" />
-                    Cancel
+                    Hủy
                   </button>
                 </div>
               )}

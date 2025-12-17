@@ -16,7 +16,7 @@ export default function EditCommentForm({ initialValue, onSave, onCancel }) {
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && onSave(value.trim())}
         className="form-control form-control-sm"
-        placeholder="Edit your comment..."
+        placeholder="Chỉnh sửa bình luận..."
         style={{ maxWidth: "300px" }}
       />
       <button

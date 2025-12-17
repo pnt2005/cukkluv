@@ -38,7 +38,7 @@ export default function RecipesPage() {
       <div className="container mt-4">
         <div className="text-center py-5">
           <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
+            <span className="visually-hidden">Đang tải...</span>
           </div>
           <p className="mt-3 text-muted">Đang tải công thức...</p>
         </div>
@@ -71,20 +71,20 @@ export default function RecipesPage() {
           </div>
 
           <RecipeSection
-            title="COMMUNITY'S RECIPES"
+            title="CÔNG THỨC CỘNG ĐỒNG"
             recipes={isSearching ? filteredCommunity : communityRecipes}
             onRecipeClick={handleRecipeClick}
           />
 
           <RecipeSection
-            title="CUKKLUV'S RECIPES"
+            title="CÔNG THỨC TỪ CUKKLUV"
             recipes={isSearching ? filteredCukkluv : cukkluvRecipes}
             onRecipeClick={handleRecipeClick}
           />
 
           {username && (
             <RecipeSection
-              title={`${username.toUpperCase()}'S RECIPES`}
+              title={`CÔNG THỨC CỦA ${username.toUpperCase()}`}
               recipes={isSearching ? filteredMyRecipes : myRecipes}
               onRecipeClick={handleRecipeClick}
             />

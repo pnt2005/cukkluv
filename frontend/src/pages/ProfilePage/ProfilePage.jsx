@@ -73,14 +73,14 @@ function ProfilePage() {
                     data-bs-toggle="modal"
                     data-bs-target="#editProfileModal"
                 >
-                    Edit profile
+                    Sửa hồ sơ
                 </button>
                 {/* LOGOUT */}
                 <button
                     className="btn btn-outline-danger w-100"
                     onClick={handleLogout}
                 >
-                    Logout
+                    Đăng xuất
                 </button>
                 </div>
             </div>
@@ -94,7 +94,7 @@ function ProfilePage() {
                     className={`nav-link ${activeTab === "posts" ? "active" : ""}`}
                     onClick={() => setActiveTab("posts")}
                 >
-                    Posts ({myPosts.length})
+                    Bài đăng ({myPosts.length})
                 </button>
                 </li>
                 <li className="nav-item">
@@ -102,7 +102,7 @@ function ProfilePage() {
                     className={`nav-link ${activeTab === "recipes" ? "active" : ""}`}
                     onClick={() => setActiveTab("recipes")}
                 >
-                    Recipes ({myRecipes.length})
+                    Công thức ({myRecipes.length})
                 </button>
                 </li>
             </ul>
@@ -123,14 +123,14 @@ function ProfilePage() {
                     />
                 )}
                 {myPosts.length === 0 && (
-                    <p className="text-muted">Bạn chưa có post nào.</p>
+                    <p className="text-muted">Bạn chưa có bài đăng nào.</p>
                 )}
                 </div>
             )}
             {/* RECIPES */}
             {activeTab === "recipes" && (
                 <div className="row">
-                {recipeLoading && <p>Loading recipes...</p>}
+                {recipeLoading && <p>Đang tải công thức...</p>}
                 {myRecipes.map((recipe) => (
                     <div
                     key={recipe.id}
@@ -142,7 +142,7 @@ function ProfilePage() {
                     </div>
                 ))}
                 {!recipeLoading && myRecipes.length === 0 && (
-                    <p className="text-muted">Bạn chưa tạo recipe nào.</p>
+                    <p className="text-muted">Bạn chưa tạo công thức nào.</p>
                 )}
                 </div>
             )}
