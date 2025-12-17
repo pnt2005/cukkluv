@@ -21,20 +21,29 @@ const LayoutWithFooter = ({ children }) => (
 function App() {
   return (
       <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/posts" element={<LayoutWithFooter><PostPage /></LayoutWithFooter>} />
-          <Route path="/" element={<LayoutWithFooter><HomePage /></LayoutWithFooter>} />
-          <Route path="/recipes" element={<LayoutWithFooter><RecipesPage /></LayoutWithFooter>} />
-          <Route path="/recipes/:id" element={<LayoutWithFooter><RecipesDetail /></LayoutWithFooter>} />
-          <Route path="/posts" element={<LayoutWithFooter><PostPage /></LayoutWithFooter>} />
-          <Route path="/recipes" element={<LayoutWithFooter><RecipesPage /></LayoutWithFooter>} />
-          <Route path="/recipes/:id" element={<LayoutWithFooter><RecipesDetail /></LayoutWithFooter>} />
-        </Routes>
-
+        <div 
+          style={{ 
+            background: "linear-gradient(135deg, #cff8eeff, #e7de9eff)", 
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column"
+          }}
+        >
+          <Navbar />
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/posts" element={<LayoutWithFooter><PostPage /></LayoutWithFooter>} />
+            <Route path="/" element={<LayoutWithFooter><HomePage /></LayoutWithFooter>} />
+            <Route path="/recipes" element={<LayoutWithFooter><RecipesPage /></LayoutWithFooter>} />
+            <Route path="/recipes/:id" element={<LayoutWithFooter><RecipesDetail /></LayoutWithFooter>} />
+            <Route path="/posts" element={<LayoutWithFooter><PostPage /></LayoutWithFooter>} />
+            <Route path="/recipes" element={<LayoutWithFooter><RecipesPage /></LayoutWithFooter>} />
+            <Route path="/recipes/:id" element={<LayoutWithFooter><RecipesDetail /></LayoutWithFooter>} />
+          </Routes>
+        </div>
+        
         <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       </Router>
   );
