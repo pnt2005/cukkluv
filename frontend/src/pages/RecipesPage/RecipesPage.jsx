@@ -15,7 +15,6 @@ export default function RecipesPage() {
   const { communityRecipes, cukkluvRecipes, myRecipes, fetchRecipes, loading } =
     useRecipeStore();
 
-  // fetch khi mount
   useEffect(() => {
     fetchRecipes();
   }, []);
@@ -32,13 +31,12 @@ export default function RecipesPage() {
     navigate(`/recipes/${recipeId}`);
   };
 
-  // Loading UI
   if (loading) {
     return (
-      <div className="container mt-4">
+      <div className="container mt-4" >
         <div className="text-center py-5">
           <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
+            <span className="visually-hidden">Đang tải...</span>
           </div>
           <p className="mt-3 text-muted">Đang tải công thức...</p>
         </div>
@@ -46,7 +44,6 @@ export default function RecipesPage() {
     );
   }
 
-  // Nếu đang search, lọc từng nhóm; nếu không search, giữ nguyên
   const isSearching = searchQuery.trim() !== "";
 
   const filteredCommunity = communityRecipes.filter((r) =>
@@ -65,7 +62,6 @@ export default function RecipesPage() {
     <div className="container mt-4">
       <div className="row justify-content-center">
         <div className="col-md-10">
-          {/* Search */}
           <div className="mb-4">
             <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
           </div>
