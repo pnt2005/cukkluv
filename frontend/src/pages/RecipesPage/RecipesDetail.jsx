@@ -86,6 +86,7 @@ export default function RecipesDetail() {
       <div className="container mt-4 text-center">
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Đang tải...</span>
+          <span className="visually-hidden">Đang tải...</span>
         </div>
       </div>
     );

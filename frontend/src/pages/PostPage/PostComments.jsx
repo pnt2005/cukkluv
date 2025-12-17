@@ -38,11 +38,11 @@ export default function PostComments({ postId }) {
           ref={commentInputRef}
           type="text"
           className="form-control"
-          placeholder="Write a comment..."
+          placeholder="Bình luận..."
           onKeyDown={(e) => e.key === "Enter" && handleSendComment()}
         />
         <button className="btn btn-primary" onClick={handleSendComment}>
-          Send
+          Gửi
         </button>
       </div>
     </div>

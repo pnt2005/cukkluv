@@ -61,7 +61,7 @@ export default function EditProfileModal() {
       <div className="modal-dialog modal-md">
         <div className="modal-content p-2">
           <div className="modal-header">
-            <h5 className="modal-title fw-bold">Edit Profile</h5>
+            <h5 className="modal-title fw-bold">Sửa hồ sơ</h5>
             <button
               type="button"
               className="btn-close"
@@ -93,7 +93,7 @@ export default function EditProfileModal() {
 
               {/* Username */}
               <div className="mb-3">
-                <label className="form-label fw-semibold">Username</label>
+                <label className="form-label fw-semibold">Tên</label>
                 <input
                   type="text"
                   className="form-control"
@@ -122,14 +122,14 @@ export default function EditProfileModal() {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Cancel
+                Hủy
               </button>
               <button
                 type="submit"
                 className="btn btn-warning text-white"
                 disabled={loading}
               >
-                {loading ? "Saving..." : "Save changes"}
+                {loading ? "Đang lưu..." : "Lưu thay đổi"}
               </button>
             </div>
           </form>

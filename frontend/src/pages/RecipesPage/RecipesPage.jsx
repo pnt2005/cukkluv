@@ -67,20 +67,20 @@ export default function RecipesPage() {
           </div>
 
           <RecipeSection
-            title="COMMUNITY'S RECIPES"
+            title="CÔNG THỨC CỘNG ĐỒNG"
             recipes={isSearching ? filteredCommunity : communityRecipes}
             onRecipeClick={handleRecipeClick}
           />
 
           <RecipeSection
-            title="CUKKLUV'S RECIPES"
+            title="CÔNG THỨC TỪ CUKKLUV"
             recipes={isSearching ? filteredCukkluv : cukkluvRecipes}
             onRecipeClick={handleRecipeClick}
           />
 
           {username && (
             <RecipeSection
-              title={`${username.toUpperCase()}'S RECIPES`}
+              title={`CÔNG THỨC CỦA ${username.toUpperCase()}`}
               recipes={isSearching ? filteredMyRecipes : myRecipes}
               onRecipeClick={handleRecipeClick}
             />

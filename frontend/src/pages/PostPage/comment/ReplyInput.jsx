@@ -16,7 +16,7 @@ export default function ReplyInput({ onSend, onCancel }) {
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && onSend(value.trim())}
         className="form-control form-control-sm"
-        placeholder="Write a reply..."
+        placeholder="Phản hồi..."
       />
       <button className="btn btn-sm btn-primary" onClick={() => onSend(value.trim())}>
         Send
