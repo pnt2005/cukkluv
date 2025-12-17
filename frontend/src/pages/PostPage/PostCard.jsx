@@ -9,7 +9,7 @@ export default function PostCard({ post, onClick }) {
   return (
     <div
       className="card mb-4 shadow-sm mx-auto"
-      style={{ cursor: "pointer" }}
+      style={{ cursor: "pointer", maxWidth: "600px", borderRadius: "20px", border: "1px solid #eee" }}
       onClick={onClick}
     >
       <div className="d-flex align-items-center mb-2 p-2">
@@ -23,7 +23,12 @@ export default function PostCard({ post, onClick }) {
         src={`${post.image}`}
         alt="Post"
         className="img-fluid rounded mb-2"
-        style={{ maxHeight: "400px", objectFit: "cover", width: "100%" }}
+        style={{ width: "100%",
+                height: "460px",      // dài hơn
+                objectFit: "contain",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "18px"  
+              }}
       />
       <div className="d-flex align-items-center gap-3 p-2">
         <button
