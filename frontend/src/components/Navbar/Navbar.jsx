@@ -4,6 +4,7 @@ import CreatePostModal from "./CreatePostModal.jsx";
 import "./Navbar.css";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
+import CreateRecipeModal from "./CreatRecipeModal.jsx";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Navbar() {
@@ -104,6 +105,7 @@ export default function Navbar() {
       {/* Modals */}
       <CreateSelectModal />
       <CreatePostModal />
+      <CreateRecipeModal/>
     </>
   );
 }

@@ -38,9 +38,6 @@ function App() {
             <Route path="/" element={<LayoutWithFooter><HomePage /></LayoutWithFooter>} />
             <Route path="/recipes" element={<LayoutWithFooter><RecipesPage /></LayoutWithFooter>} />
             <Route path="/recipes/:id" element={<LayoutWithFooter><RecipesDetail /></LayoutWithFooter>} />
-            <Route path="/posts" element={<LayoutWithFooter><PostPage /></LayoutWithFooter>} />
-            <Route path="/recipes" element={<LayoutWithFooter><RecipesPage /></LayoutWithFooter>} />
-            <Route path="/recipes/:id" element={<LayoutWithFooter><RecipesDetail /></LayoutWithFooter>} />
           </Routes>
         </div>
         

@@ -52,23 +52,15 @@ export const useRecipeStore = create((set, get) => ({
   // Fetch recipe detail theo ID
   fetchRecipeDetail: async (id) => {
     set({ loading: true, error: null });
-    
-    const { recipes } = get();
-    
-    // Tìm trong cache trước
-    const existing = recipes.find(r => r.id === parseInt(id));
-    if (existing) {
-      set({ recipe: existing, loading: false });
-      return;
-    }
 
-    // Nếu chưa có, fetch từ API
     try {
       const fetchedRecipe = await recipesAPI.fetchRecipeByID(id);
-      
+
       set((state) => ({
-        recipes: [...state.recipes, fetchedRecipe],
-        recipe: fetchedRecipe,
+        recipes: state.recipes.map(r =>
+          r.id === fetchedRecipe.id ? fetchedRecipe : r
+        ),
+        recipe: { ...fetchedRecipe }, 
         loading: false
       }));
     } catch (err) {
@@ -77,20 +69,18 @@ export const useRecipeStore = create((set, get) => ({
     }
   },
 
-  // Update recipe trong store (sau khi edit thành công)
+
+
   updateRecipeInStore: (updatedRecipe) => {
     const username = localStorage.getItem("username") || "";
     
     set((state) => {
-      // Update trong recipes array
       const newRecipes = state.recipes.map((r) =>
         r.id === updatedRecipe.id ? updatedRecipe : r
       );
 
-      // Re-categorize sau khi update
       const categorized = categorizeRecipes(newRecipes, username);
 
-      // Update recipe detail nếu đang xem recipe này
       const newRecipe = state.recipe?.id === updatedRecipe.id 
         ? updatedRecipe 
         : state.recipe;
@@ -103,18 +93,14 @@ export const useRecipeStore = create((set, get) => ({
     });
   },
 
-  // Delete recipe khỏi store
   deleteRecipeFromStore: (recipeId) => {
     const username = localStorage.getItem("username") || "";
     
     set((state) => {
-      // Remove khỏi recipes array
       const newRecipes = state.recipes.filter(r => r.id !== recipeId);
 
-      // Re-categorize sau khi delete
       const categorized = categorizeRecipes(newRecipes, username);
 
-      // Clear recipe detail nếu đang xem recipe bị xóa
       const newRecipe = state.recipe?.id === recipeId ? null : state.recipe;
 
       return {
@@ -125,7 +111,6 @@ export const useRecipeStore = create((set, get) => ({
     });
   },
 
-  // Add recipe mới vào store (sau khi tạo thành công)
   addRecipeToStore: (newRecipe) => {
     const username = localStorage.getItem("username") || "";
     
@@ -140,12 +125,11 @@ export const useRecipeStore = create((set, get) => ({
     });
   },
 
-  // Clear current recipe detail
   clearRecipeDetail: () => {
     set({ recipe: null });
   },
 
-  // Re-categorize khi user thay đổi (login/logout)
+
   recategorizeRecipes: () => {
     const username = localStorage.getItem("username") || "";
     const { recipes } = get();

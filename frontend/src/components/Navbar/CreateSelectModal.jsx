@@ -10,23 +10,23 @@ const CreateSelectModal = () => {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content p-3 text-center">
           <h5 className="modal-title mb-3 fw-bold text-warning" id="createSelectModalLabel">
-            Create New
+            Tạo mới
           </h5>
-          <p>What do you want to create?</p>
+          <p>Bạn muốn tạo bài đăng hay công thức ?</p>
           <div className="d-flex justify-content-center gap-3 mt-3">
             <button
               className="btn btn-outline-warning"
               data-bs-target="#createPostModal"
               data-bs-toggle="modal"
             >
-              📝 Post
+              📝 Bài đăng
             </button>
             <button
               className="btn btn-outline-warning"
               data-bs-target="#createRecipeModal"
               data-bs-toggle="modal"
             >
-              🍳 Recipe
+              🍳 Công thức
             </button>
           </div>
         </div>
