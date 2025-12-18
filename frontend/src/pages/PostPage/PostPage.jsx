@@ -6,6 +6,7 @@ import InfiniteScroll from "../../components/InfiniteScroll.jsx";
 
 export default function PostPage() {
   const [selectedPostId, setSelectedPostId] = useState(null);
+
   const { posts, fetchPosts, hasNext, page } = usePostStore();
 
   useEffect(() => {
@@ -13,7 +14,9 @@ export default function PostPage() {
   }, []);
 
   const handleLoadMore = () => {
-    if (hasNext) fetchPosts(page + 1);
+    if (hasNext) {
+      fetchPosts(page + 1);
+    }
   };
 
   return (
@@ -22,6 +25,8 @@ export default function PostPage() {
         <div className="col-md-8">
           <InfiniteScroll
             items={posts}
+            hasNext={hasNext}
+            onLoadMore={handleLoadMore}
             renderItem={(post) => (
               <PostCard
                 key={post.id}
@@ -29,8 +34,6 @@ export default function PostPage() {
                 onClick={() => setSelectedPostId(post.id)}
               />
             )}
-            onLoadMore={handleLoadMore}
-            containerStyle={{ width: "100%" }}
           />
         </div>
       </div>
@@ -38,9 +41,7 @@ export default function PostPage() {
       {selectedPostId && (
         <PostModal
           postId={selectedPostId}
-          onClose={() => {
-            setSelectedPostId(null);
-          }}
+          onClose={() => setSelectedPostId(null)}
         />
       )}
     </div>
