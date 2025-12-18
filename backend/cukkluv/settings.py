@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'accounts',
     'posts',
     'recipes',
     'comments',
@@ -48,6 +47,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'tags',
     'nested_admin',
+    'accounts.apps.AccountsConfig'
 ]
 
 MIDDLEWARE = [
