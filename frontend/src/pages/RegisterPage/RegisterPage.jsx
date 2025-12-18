@@ -39,7 +39,7 @@
     };
 
   return (
-    <div className="py-5 container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', background: "linear-gradient(135deg, #cff8eeff, #e7de9eff)", }}>
+    <div className="py-5 container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <div className="row bg-white shadow-lg" style={{ 
         width: '90%', 
         maxWidth: '1200px',

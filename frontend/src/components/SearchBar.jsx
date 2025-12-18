@@ -18,7 +18,7 @@ export default function SearchBar({
   return (
     <form 
       onSubmit={handleSubmit} 
-      className={`d-flex align-items-stretch`} 
+      className={`d-flex align-items-stretch bg-white`} 
       style={{ 
         maxWidth: "800px", 
         margin: "0 auto", 
@@ -47,7 +47,7 @@ export default function SearchBar({
         />
         <input
           type="text"
-          className="border-0 bg-transparent w-100 h-100" 
+          className="border-0 w-100 h-100" 
           placeholder={placeholder}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
