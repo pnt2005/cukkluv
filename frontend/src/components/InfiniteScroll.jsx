@@ -1,35 +1,73 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function InfiniteScrollList({
-  fetchPage,
+export default function InfiniteScroll({
+  items = [],
   renderItem,
-  items,
   onLoadMore,
-  threshold = 200,
-  containerStyle = { height: "100%", overflowY: "auto" },
+  hasNext = true,
+  rootMargin = "200px",
+  minLoadingTime = 200,
 }) {
-  const containerRef = useRef();
+  const sentinelRef = useRef(null);
+  const loadingRef = useRef(false);
+  const startTimeRef = useRef(0);
+  const ignoreFirstIntersectRef = useRef(true);
+
+  const [, forceRender] = useState(0);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    if (!hasNext) return;
 
-    const handleScroll = () => {
-      if (
-        container.scrollHeight - container.scrollTop - container.clientHeight <
-        threshold
-      ) {
-        onLoadMore?.();
-      }
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
 
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [threshold, onLoadMore]);
+        // 🚫 bỏ qua lần intersect đầu tiên (khi mới mount)
+        if (ignoreFirstIntersectRef.current) {
+          ignoreFirstIntersectRef.current = false;
+          return;
+        }
+
+        if (entry.isIntersecting && !loadingRef.current) {
+          loadingRef.current = true;
+          startTimeRef.current = Date.now();
+          forceRender((n) => n + 1);
+          onLoadMore?.();
+        }
+      },
+      { root: null, rootMargin, threshold: 0 }
+    );
+
+    if (sentinelRef.current) observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [hasNext, onLoadMore, rootMargin]);
+
+  useEffect(() => {
+    if (!loadingRef.current) return;
+
+    const elapsed = Date.now() - startTimeRef.current;
+    const remain = minLoadingTime - elapsed;
+
+    const timer = setTimeout(() => {
+      loadingRef.current = false;
+      forceRender((n) => n + 1);
+    }, Math.max(0, remain));
+
+    return () => clearTimeout(timer);
+  }, [items.length, minLoadingTime]);
 
   return (
-    <div ref={containerRef} style={containerStyle}>
-      {items?.map?.(renderItem)}
-    </div>
+    <>
+      {items.map(renderItem)}
+
+      {hasNext && (
+        <div className="d-flex justify-content-center my-3">
+          {loadingRef.current && (
+            <div className="spinner-border text-secondary" role="status" />
+          )}
+          <div ref={sentinelRef} style={{ height: 1 }} />
+        </div>
+      )}
+    </>
   );
 }
