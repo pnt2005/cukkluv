@@ -6,7 +6,7 @@ export default function InfiniteScroll({
   onLoadMore,
   hasNext = true,
   rootMargin = "200px",
-  minLoadingTime = 200,
+  minLoadingTime = 400,
 }) {
   const sentinelRef = useRef(null);
   const loadingRef = useRef(false);
@@ -22,7 +22,7 @@ export default function InfiniteScroll({
       (entries) => {
         const entry = entries[0];
 
-        // 🚫 bỏ qua lần intersect đầu tiên (khi mới mount)
+        // 🚫 bỏ lần intersect đầu khi mới mount
         if (ignoreFirstIntersectRef.current) {
           ignoreFirstIntersectRef.current = false;
           return;
@@ -42,6 +42,7 @@ export default function InfiniteScroll({
     return () => observer.disconnect();
   }, [hasNext, onLoadMore, rootMargin]);
 
+  // đảm bảo spinner hiện tối thiểu X ms
   useEffect(() => {
     if (!loadingRef.current) return;
 
@@ -60,12 +61,23 @@ export default function InfiniteScroll({
     <>
       {items.map(renderItem)}
 
+      {/* Loading + Sentinel */}
       {hasNext && (
         <div className="d-flex justify-content-center my-3">
           {loadingRef.current && (
-            <div className="spinner-border text-secondary" role="status" />
+            <div
+              className="spinner-border text-secondary"
+              role="status"
+            />
           )}
           <div ref={sentinelRef} style={{ height: 1 }} />
+        </div>
+      )}
+
+      {/* ✅ ĐÃ XEM HẾT */}
+      {!hasNext && items.length > 0 && (
+        <div className="text-center my-4 text-muted">
+          🎉 Bạn đã xem hết
         </div>
       )}
     </>
