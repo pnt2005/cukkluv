@@ -35,7 +35,7 @@ export default function RecipesDetail() {
         try {
             const updated = await recipesAPI.updateRecipe(id, fd);
             if (updated && updated.id) {
-                updateRecipeInStore(updated); 
+                await fetchRecipeDetail(id);
                 showSuccess("Cập nhật công thức thành công!"); 
                 setTimeout(() => {
                 setEditMode(false);

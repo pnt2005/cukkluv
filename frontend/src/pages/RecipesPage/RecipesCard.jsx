@@ -8,8 +8,8 @@ const RecipeCard = ({ recipe, showAuthor, layout = "vertical" }) => {
       <div
         className="flex-shrink-0 bg-white rounded-3 overflow-hidden shadow-sm hover:shadow-md transition-all"
         style={{
-          width: "250px",
-          height: "250px",
+          width: "260px",
+          height: "260px",
           cursor: "pointer",
         }}
       >
@@ -51,68 +51,68 @@ const RecipeCard = ({ recipe, showAuthor, layout = "vertical" }) => {
           </h3>
 
           {/* Thông tin + action */}
-<div
-  className="d-flex align-items-center justify-content-between text-muted"
-  style={{ fontSize: "13px" }}
->
-  {/* Bên trái: cookTime / view / portion */}
-  <div className="d-flex align-items-center" style={{ gap: "12px" }}>
-    <div className="d-flex align-items-center">
-      <Clock size={14} className="me-1" />
-      <span>{recipe.cookTime}</span>
-    </div>
-    <div className="d-flex align-items-center">
-      <Eye size={14} className="me-1" />
-      <span>{recipe.views}</span>
-    </div>
-    <div className="d-flex align-items-center">
-      <User size={14} className="me-1" />
-      <span>{recipe.portion}</span>
-    </div>
-  </div>
+          <div
+            className="d-flex align-items-center justify-content-between text-muted"
+            style={{ fontSize: "13px" }}
+          >
+            {/* Bên trái: cookTime / view / portion */}
+            <div className="d-flex align-items-center" style={{ gap: "12px" }}>
+              <div className="d-flex align-items-center">
+                <Clock size={14} className="me-1" />
+                <span>{recipe.cookTime}</span>
+              </div>
+              <div className="d-flex align-items-center">
+                <Eye size={14} className="me-1" />
+                <span>{recipe.views}</span>
+              </div>
+              <div className="d-flex align-items-center">
+                <User size={14} className="me-1" />
+                <span>{recipe.portion}</span>
+              </div>
+            </div>
 
-  {/* Bên phải: like & comment */}
-  <div className="d-flex align-items-center" style={{ gap: "10px" }}>
-    <button
-      className="btn btn-link p-0 text-muted"
-      onClick={(e) => {
-        e.stopPropagation();
-        // TODO: handleLike(recipe.id)
-      }}
-    >
-      <Heart size={16} />
-    </button>
+            {/* Bên phải: like & comment */}
+            <div className="d-flex align-items-center" style={{ gap: "10px" }}>
+              <button
+                className="btn btn-link p-0 text-muted"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // TODO: handleLike(recipe.id)
+                }}
+              >
+                <Heart size={16} />
+              </button>
 
-    <button
-      className="btn btn-link p-0 text-muted"
-      onClick={(e) => {
-        e.stopPropagation();
-        // TODO: openComments(recipe.id)
-      }}
-    >
-      <MessageCircle size={16} />
-    </button>
-  </div>
-</div>
+                <button
+                  className="btn btn-link p-0 text-muted"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // TODO: openComments(recipe.id)
+                  }}
+                >
+                  <MessageCircle size={16} />
+                </button>
+              </div>
+            </div>
 
 
           {/* Tác giả */}
           {showAuthor && (
-            <div className="d-flex align-items-center">
-    <img
-      src={`${API_BASE_URL}${recipe.author.avatar}`}
-      alt="Avatar"
-      className="rounded-circle me-2"
-      style={{
-        width: "40px",
-        height: "40px",
-        objectFit: "cover",
-      }}
-    />
-    <div className="fw-bold" style={{ fontSize: "13px" }}>
-      {recipe.author.username}
-    </div>
-  </div>
+            <div className="d-flex align-items-center mt-2">
+              <img
+                src={`${API_BASE_URL}${recipe.author.avatar}`}
+                alt="Avatar"
+                className="rounded-circle me-2"
+                style={{
+                  width: "25px",
+                  height: "25px",
+                  objectFit: "cover",
+                }}
+              />
+              <div className="fw-bold" style={{ fontSize: "13px" }}>
+                {recipe.author.username}
+              </div>
+            </div>
           )}
         </div>
       </div>

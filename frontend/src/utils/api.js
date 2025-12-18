@@ -67,38 +67,15 @@ export const commentsAPI = {
 };
 
 export const recipesAPI = {
-  // Fetch all recipes (có thể thêm filters)
   fetchAllRecipes: (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     return apiGet(`recipes/${queryString ? `?${queryString}` : ''}`);
   },
-
-  // Fetch single recipe by ID
   fetchRecipeByID: (id) => apiGet(`recipes/${id}/`),
-
-  // Create new recipe
   createRecipe: (formData) => apiPost(`recipes/`, formData),
-
-  // Update existing recipe
   updateRecipe: (id, formData) => apiPatch(`recipes/${id}/`, formData),
-
-  // Delete recipe
   deleteRecipe: (id) => apiDelete(`recipes/${id}/`),
-
-  // Toggle like on recipe (nếu có feature này)
-  toggleLike: (recipeId) => apiPost(`likes/recipes/${recipeId}/`),
-
-  // Fetch recipes by category
   fetchByCategory: (category) => apiGet(`recipes/?category=${category}`),
-
-  // Fetch user's recipes
   fetchMyRecipes: () => apiGet(`recipes/my/`),
-
-  // Search recipes
   searchRecipes: (query) => apiGet(`recipes/?search=${encodeURIComponent(query)}`),
-
-  catch (err) {
-    console.error("Update failed:", err.response?.data || err);
-    alert(JSON.stringify(err.response?.data, null, 2));
-  }
 };
