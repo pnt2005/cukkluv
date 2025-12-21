@@ -4,6 +4,7 @@ from recipes.models import Recipe
 from posts.models import Post
 
 class Comment(models.Model):
+    """Model Comment để lưu trữ bình luận của người dùng"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

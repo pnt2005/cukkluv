@@ -5,6 +5,7 @@ from tags.serializers import TagSerializer
 from tags.models import Tag, PostTag
 
 class PostSerializer(serializers.ModelSerializer):
+    """Serializer cho model Post"""
     author = UserSerializer(read_only=True)
     like_count = serializers.SerializerMethodField()
     comment_count = serializers.SerializerMethodField()
@@ -21,12 +22,33 @@ class PostSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
     def get_like_count(self, obj):
+        """
+            Lấy số lượng lượt thích cho bài viết hiện tại
+            Input:
+                obj: instance của Post
+            Output:
+                Số lượng lượt thích cho bài viết hiện tại.
+        """
         return obj.likes.count()
 
     def get_comment_count(self, obj):
+        """
+            Lấy số lượng bình luận cho bài viết hiện tại
+            Input:
+                obj: instance của Post
+            Output:
+                Số lượng bình luận cho bài viết hiện tại.
+        """
         return obj.comments.count()
     
     def get_user_liked(self, obj):
+        """
+            Kiểm tra xem người dùng hiện tại có thích bài viết này không
+            Input:
+                obj: instance của Post
+            Output:
+                Boolean cho biết người dùng hiện tại có thích bài viết này không.
+        """
         request = self.context.get('request')
         user = getattr(request, 'user', None)
         if user and user.is_authenticated:
@@ -34,10 +56,24 @@ class PostSerializer(serializers.ModelSerializer):
         return False
     
     def get_tag_objects(self, obj):
+        """
+            Lấy danh sách thẻ (tags) liên quan đến bài viết hiện tại
+            Input:
+                obj: instance của Post
+            Output:
+                Danh sách các thẻ dưới dạng serialized data.
+        """
         tags = [pt.tag for pt in obj.posttag_set.all()]
         return TagSerializer(tags, many=True).data
 
     def create(self, validated_data):
+        """
+            Tạo một bài viết mới cùng với các thẻ (tags) liên quan
+            Input:
+                validated_data: Dữ liệu đã được xác thực để tạo bài viết
+            Output:
+                Instance của Post mới được tạo.
+        """
         tags = validated_data.pop('tags', '')
         post = Post.objects.create(**validated_data)
         if isinstance(tags, list):
@@ -49,6 +85,14 @@ class PostSerializer(serializers.ModelSerializer):
         return post
 
     def update(self, instance, validated_data):
+        """
+            Cập nhật một bài viết cùng với các thẻ (tags) liên quan
+            Input:
+                instance: Instance của Post cần cập nhật
+                validated_data: Dữ liệu đã được xác thực để cập nhật bài viết
+            Output:
+                Instance của Post đã được cập nhật.
+        """
         tags = validated_data.pop('tags', None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)

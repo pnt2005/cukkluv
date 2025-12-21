@@ -5,6 +5,7 @@ from posts.models import Post
 from comments.models import Comment
 
 class Like(models.Model):
+    """Model Like để lưu trữ thông tin lượt thích của người dùng"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='likes', null=True, blank=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes', null=True,blank=True)

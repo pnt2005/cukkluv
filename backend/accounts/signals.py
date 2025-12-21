@@ -5,5 +5,6 @@ from .models import Profile
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
+    """Tín hiệu để tự động tạo Profile khi một User mới được tạo."""
     if created:
         Profile.objects.create(user=instance)
