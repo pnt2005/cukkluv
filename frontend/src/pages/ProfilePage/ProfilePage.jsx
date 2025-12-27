@@ -51,7 +51,7 @@ function ProfilePage() {
         <div className="row">
            {/* ===== LEFT: PROFILE SIDEBAR ===== */}
             <div className="col-md-3">
-            <div className="card border-0 sticky-top" style={{ top: "80px" }}>
+            <div className="sticky-top" style={{ top: "200px"}}>
                 {/* AVATAR */}
                 <img
                     src={`${API_BASE_URL}${user.avatar}`}

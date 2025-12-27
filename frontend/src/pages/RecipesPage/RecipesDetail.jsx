@@ -93,7 +93,7 @@ export default function RecipesDetail() {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-2 mb-3">
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="bg-white rounded shadow-sm overflow-hidden">

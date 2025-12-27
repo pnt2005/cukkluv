@@ -4,7 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 export default function Footer() {
   return (
     <footer
-      className="px-4 pt-5 pb-4 mt-5"
+      className="px-4 pt-5 pb-4 mt-0"
       style={{
         backgroundColor: "#FFF3CD", 
         borderRadius: "28px 28px 0 0",
