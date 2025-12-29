@@ -5,6 +5,8 @@ from posts.serializers import PostSerializer
 from posts.models import Post
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
+
 
 class PostListCreateView(APIView):
     """Xử lý lấy danh sách và tạo mới bài viết"""
@@ -30,10 +32,12 @@ class PostListCreateView(APIView):
         """
         paginator = PageNumberPagination()
         paginator.page_size = 5
-        tag_name = request.query_params.get('tag', None)
+        search = request.query_params.get('search')
         posts = Post.objects.all().order_by('-created_at')
-        if tag_name:
-            posts = posts.filter(posttag__tag__name=tag_name).distinct()
+        if search:
+            posts = posts.filter(
+                Q(content__icontains=search)
+            )
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
