@@ -17,22 +17,25 @@ class StepSerializer(serializers.ModelSerializer):
         fields = ['id', 'order', 'text', 'images']
 
 class RecipeSerializer(serializers.ModelSerializer):
-    """Serializer cho Recipe model với đầy đủ thông tin"""
     author = UserSerializer(read_only=True)
-    steps = StepSerializer(many=True)
+    steps = serializers.JSONField(write_only=True)
+    steps_detail = StepSerializer(source="steps", many=True, read_only=True)
 
     class Meta:
         model = Recipe
         fields = '__all__'
 
     def create(self, validated_data):
-        steps_data = validated_data.pop('steps', [])
-        recipe = Recipe.objects.create(**validated_data, author=self.context['request'].user)
+        steps_data = validated_data.pop("steps", [])
+
+        recipe = Recipe.objects.create(**validated_data)
+
         for step_data in steps_data:
-            images_data = step_data.pop('images', [])
+            images_data = step_data.pop("images", [])
             step = Step.objects.create(recipe=recipe, **step_data)
             for img in images_data:
                 StepImage.objects.create(step=step, **img)
+
         return recipe
         
     def update(self, instance, validated_data):
