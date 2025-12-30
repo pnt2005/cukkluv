@@ -43,9 +43,7 @@ INSTALLED_APPS = [
     'recipes',
     'comments',
     'likes',
-    'saves',
     'corsheaders',
-    'tags',
     'nested_admin',
     'accounts.apps.AccountsConfig'
 ]

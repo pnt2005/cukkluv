@@ -5,7 +5,6 @@ from posts.serializers import PostSerializer
 from posts.models import Post
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Q
 
 
 class PostListCreateView(APIView):
@@ -24,7 +23,7 @@ class PostListCreateView(APIView):
     
     def get(self, request):
         """
-            Lấy danh sách bài viết với phân trang và lọc theo thẻ (tag).
+            Lấy danh sách bài viết với phân trang.
             Input:
                 request: Yêu cầu HTTP.
             Output:
@@ -35,9 +34,7 @@ class PostListCreateView(APIView):
         search = request.query_params.get('search')
         posts = Post.objects.all().order_by('-created_at')
         if search:
-            posts = posts.filter(
-                Q(content__icontains=search)
-            )
+            posts = posts.filter(content__icontains=search)
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
